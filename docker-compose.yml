@@ -1,0 +1,42 @@
+version: '3.9'
+services:
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    env_file:
+      - .env
+    depends_on:
+      - http
+    networks:
+      - ridex-internal-network
+    restart: unless-stopped
+
+  http:
+    build:
+      context: .
+      dockerfile: apps/http/Dockerfile
+    env_file:
+      - .env
+    networks:
+      - ridex-internal-network
+    expose:
+      - 8080
+    restart: unless-stopped
+
+  nginx:
+    image: nginx:alpine
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - http
+      - web
+    networks:
+      - ridex-internal-network
+
+networks:
+  ridex-internal-network:
+    driver: bridge

@@ -1,0 +1,157 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum PreferenceOption {
+  GOOD
+  NEUTRAL
+  AGAINST
+}
+
+model User {
+  id            String      @id @default(uuid())
+  name          String
+  email         String      @unique
+  password      String
+  phone_number  String?
+  profile_photo String?
+  bio           String?
+  refresh_token String?
+  posted_rides  Ride[]      @relation("PostedRides")
+  joined_rides  Passenger[]
+
+  chatPreference    PreferenceOption? @default(NEUTRAL)
+  musicPreference   PreferenceOption? @default(NEUTRAL)
+  smokingPreference PreferenceOption? @default(AGAINST)
+  petPreference     PreferenceOption? @default(NEUTRAL)
+
+  messages     Message[]
+  vehicles     Vehicle[]
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  reviewsGiven Review[]  @relation("ReviewsGiven")
+  reviewsGot   Review[]  @relation("ReviewsGot")
+  ratingsGiven Rating[]  @relation("RatingsGiven")
+  ratingsGot   Rating[]  @relation("RatingsGot")
+}
+
+model Point {
+  id            String  @id @default(uuid())
+  latitude      Float   @map("lat")
+  longitude     Float   @map("long")
+  geohash6      String
+  geohash7      String
+  geohash8      String
+  geohash_full  String
+  place_id      String  @unique
+  city          String
+  short_address String?
+  full_address  String
+  premise       String?
+  postal_code   String?
+
+  departure_rides   Ride[] @relation("DeparturePoint")
+  destination_rides Ride[] @relation("DestinationPoint")
+
+  @@index([geohash6])
+  @@index([geohash7])
+  @@index([geohash8])
+  @@index([place_id])
+}
+
+model Ride {
+  id                   String      @id @default(uuid())
+  departure_point_id   String
+  destination_point_id String
+  departure_point      Point       @relation("DeparturePoint", fields: [departure_point_id], references: [id])
+  destination_point    Point       @relation("DestinationPoint", fields: [destination_point_id], references: [id])
+  departure_time       DateTime
+  available_seats      Int
+  price                Decimal     @default(0.00)
+  createdBy_id         String
+  createdBy            User        @relation("PostedRides", fields: [createdBy_id], references: [id], onDelete: Cascade)
+  passenger            Passenger[]
+  // room_id              String?
+  // room                 Room        @relation(fields: [room_id], references: [id], onDelete: Cascade)
+  Room                 Room[]
+  reviews              Review[]
+  ratings              Rating[]
+
+  @@index([departure_point_id])
+  @@index([destination_point_id])
+  @@index([departure_time])
+  @@index([available_seats])
+}
+
+model Passenger {
+  id       String   @id @default(uuid())
+  ride_id  String
+  user_id  String
+  joinedAt DateTime @default(now())
+
+  ride Ride @relation(fields: [ride_id], references: [id])
+  user User @relation(fields: [user_id], references: [id])
+
+  @@unique([ride_id, user_id])
+}
+
+model Vehicle {
+  id        String   @id @default(uuid())
+  brand     String
+  name      String
+  color     String
+  photo1    String?
+  photo2    String?
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String // Foreign key
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Review {
+  id          String   @id @default(uuid())
+  content     String
+  author      User     @relation("ReviewsGiven", fields: [authorId], references: [id])
+  authorId    String
+  recipient   User     @relation("ReviewsGot", fields: [recipientId], references: [id])
+  recipientId String
+  ride        Ride     @relation(fields: [rideId], references: [id])
+  rideId      String
+  createdAt   DateTime @default(now())
+}
+
+model Rating {
+  id          String   @id @default(uuid())
+  score       Int
+  author      User     @relation("RatingsGiven", fields: [authorId], references: [id])
+  authorId    String
+  recipient   User     @relation("RatingsGot", fields: [recipientId], references: [id])
+  recipientId String
+  ride        Ride     @relation(fields: [rideId], references: [id]) // Optional link to a ride
+  rideId      String
+  createdAt   DateTime @default(now())
+}
+
+model Room {
+  id        String    @id @default(uuid())
+  ride      Ride?     @relation(fields: [rideId], references: [id])
+  messages  Message[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  rideId    String?
+}
+
+model Message {
+  id        String   @id @default(uuid())
+  content   String
+  sender_id String
+  sender    User     @relation(fields: [sender_id], references: [id])
+  room_id   String
+  room      Room     @relation(fields: [room_id], references: [id])
+  createdAt DateTime @default(now())
+}

@@ -1,0 +1,24 @@
+{
+  "name": "@ridex/backend-common",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "exports": {
+    "./config": "./src/index.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@ridex/typescript-config": "workspace:*"
+  },
+  "dependencies": {
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.13.10",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2"
+  }
+}
