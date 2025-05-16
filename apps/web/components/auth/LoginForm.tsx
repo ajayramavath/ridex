@@ -7,7 +7,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { Input } from '@ridex/ui/components/input'
 import { Button } from '@ridex/ui/components/button'
 import { signIn } from 'next-auth/react'
-import { useSearchParams } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { toast } from '@ridex/ui/components/sonner'
 import BackButton from './BackButton'
 
@@ -39,6 +39,7 @@ const LoginForm = () => {
       const redirectPath = callbackUrl.startsWith('http')
         ? new URL(callbackUrl).pathname
         : callbackUrl;
+      console.log("Redirecting to:", redirectPath);
       window.location.href = redirectPath;
     }
     setIsLoading(false);

@@ -41,7 +41,6 @@ export const authOptions: NextAuthOptions = {
               "Accept": "application/json"
             },
             body: JSON.stringify(credentials),
-            credentials: "include",
           });
 
           if (!res.ok) {
