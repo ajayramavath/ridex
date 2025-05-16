@@ -4,11 +4,19 @@ import { getToken } from "next-auth/jwt";
 import type { NextRequest } from "next/server";
 
 export async function middleware(req: NextRequest) {
+  const cookieHeader = req.headers.get("cookie") || "";
+  console.log("All cookies in request:", [...req.cookies.getAll()]);
+
+  const hasSecureCookie = cookieHeader.includes('__Secure-next-auth.session-token');
+  const hasDevCookie = cookieHeader.includes('next-auth.session-token');
+
   const token = await getToken({
     req,
     secret: process.env.NEXTAUTH_SECRET,
     raw: true,
-    cookieName: process.env.NODE_ENV === 'production' ? '__Secure-next-auth.session-token' : 'next-auth.session-token'
+    cookieName: hasSecureCookie
+      ? '__Secure-next-auth.session-token'
+      : 'next-auth.session-token',
   });
 
   console.log("Middleware Token:", token);
