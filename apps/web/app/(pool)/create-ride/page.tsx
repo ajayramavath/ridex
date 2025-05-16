@@ -6,9 +6,9 @@ import React from 'react'
 import CreateRide from './CreateRide'
 
 const page = async () => {
-  const session = await getAuthSession()
-  console.log("Session:", session);
-  if (!session || !session.user || !session.user.name) redirect('/login')
+  // const session = await getAuthSession()
+  // console.log("Session:", session);
+  // if (!session || !session.user || !session.user.name) redirect('/login')
 
   return (
     <CreateRide />
