@@ -10,6 +10,9 @@ export async function middleware(req: NextRequest) {
     raw: true,
     cookieName: process.env.NODE_ENV === 'production' ? '__Secure-next-auth.session-token' : 'next-auth.session-token'
   });
+
+  console.log("Middleware Token:", token);
+
   const isAuthenticated = !!token;
 
   const { pathname } = req.nextUrl;
@@ -24,12 +27,12 @@ export async function middleware(req: NextRequest) {
     pathname.startsWith(route)
   )
 
-  // if (shouldProtect && !isAuthenticated) {
-  //   const url = req.nextUrl.clone();
-  //   url.pathname = '/login'
-  //   url.searchParams.set('callbackUrl', pathname);
-  //   return NextResponse.redirect(url);
-  // }
+  if (shouldProtect && !isAuthenticated) {
+    const url = req.nextUrl.clone();
+    url.pathname = '/login'
+    url.searchParams.set('callbackUrl', pathname);
+    return NextResponse.redirect(url);
+  }
 
   return NextResponse.next();
 }
