@@ -70,8 +70,9 @@ export const CreatePointResponseSchema = CreatePointSchema.extend({
 export type CreatePointInput = z.infer<typeof CreatePointSchema>;
 
 export const CreateRideSchema = z.object({
-  departurePointId: z.string().uuid(),
-  destinationPointId: z.string().uuid(),
+  from: CreatePointSchema,
+  to: CreatePointSchema,
+  polyline: z.string(),
   departureTime: z.coerce.date(),
   availableSeats: z.number().min(1).max(4),
   price: z.coerce.number().min(0),
@@ -96,8 +97,10 @@ export const SearchFiltersSchema = z.object({
 export type SearchFilters = z.infer<typeof SearchFiltersSchema>
 
 export const SearchPayloadSchema = z.object({
-  from: z.string().uuid(),
-  to: z.string().uuid(),
+  from_lat: z.number().min(-90).max(90),
+  from_lng: z.number().min(-90).max(90),
+  to_lat: z.number().min(-90).max(90),
+  to_lng: z.number().min(-90).max(90),
   departureTime: z.coerce.date(),
   availableSeats: z.number().min(1).max(4),
   maxDistanceKm: z.number().min(0).default(20),

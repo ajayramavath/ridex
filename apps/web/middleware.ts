@@ -5,10 +5,7 @@ import type { NextRequest } from "next/server";
 
 export async function middleware(req: NextRequest) {
   const cookieHeader = req.headers.get("cookie") || "";
-  console.log("All cookies in request:", [...req.cookies.getAll()]);
-
   const hasSecureCookie = cookieHeader.includes('__Secure-next-auth.session-token');
-  const hasDevCookie = cookieHeader.includes('next-auth.session-token');
 
   const token = await getToken({
     req,
@@ -18,8 +15,6 @@ export async function middleware(req: NextRequest) {
       ? '__Secure-next-auth.session-token'
       : 'next-auth.session-token',
   });
-
-  console.log("Middleware Token:", token);
 
   const isAuthenticated = !!token;
 

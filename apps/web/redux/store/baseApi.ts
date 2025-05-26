@@ -12,8 +12,6 @@ export type ApiConfig = {
   withAuth?: boolean;
 }
 
-console.log("Using Api Url :", process.env.NEXT_PUBLIC_API_URL)
-
 export const baseQueryWithAuth: BaseQueryFn<
   string | FetchArgs,
   unknown,
@@ -39,7 +37,7 @@ export const baseQueryWithAuth: BaseQueryFn<
   }
 
   const baseQuery = fetchBaseQuery({
-    baseUrl: process.env.NEXT_PUBLIC_API_URL,
+    baseUrl: process.env.NODE_ENV === 'production' ? process.env.NEXT_PUBLIC_API_URL : 'http://localhost:8080',
     prepareHeaders: (headers) => {
       if (token) {
         headers.set('Authorization', `Bearer ${token}`);

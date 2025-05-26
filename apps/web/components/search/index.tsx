@@ -25,8 +25,10 @@ const Search = ({ onSearchComplete }: { onSearchComplete?: () => void }) => {
   const handleSearch = async () => {
     if (!departure || !destination || !departureDate || !availableSeats || !departurePointId || !destinationPointId) return
     const payload: SearchPayload = {
-      from: departurePointId,
-      to: destinationPointId,
+      from_lat: departure.latitude,
+      from_lng: departure.longitude,
+      to_lat: destination.latitude,
+      to_lng: destination.longitude,
       departureTime: departureDate,
       availableSeats,
       maxDistanceKm: 20

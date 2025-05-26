@@ -1,7 +1,7 @@
 import Container from "typedi";
 import { RideService } from "../services/ride.service";
 import { NextFunction, Request, Response } from "express";
-import { CreateRideInput, Point, Ride, SearchPayload } from "@ridex/common";
+import { CreateRideInput, CreatePointInput, Ride, SearchPayload } from "@ridex/common";
 import { ApiError } from "../error/ApiError";
 
 export class RideController {
@@ -12,9 +12,10 @@ export class RideController {
       if (!req.user) throw new ApiError(401, 'Unauthorized')
       const ride: CreateRideInput = req.body;
       const user_id = req.user.id;
-      const rideData: Ride = await this.ride.createRide({ rideData: ride, createdBy_id: user_id });
+      const rideData = await this.ride.createRide({ rideData: ride, createdBy_id: user_id });
+      if (!rideData) throw new ApiError(409, 'Ride not created');
 
-      res.status(201).json({ message: 'Ride Created', data: rideData });
+      res.status(201).json({ message: 'Ride Created', data: rideData[0] });
     } catch (error) {
       next(error);
     }
@@ -22,10 +23,11 @@ export class RideController {
 
   public createPoint = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const point: Partial<Point> = req.body;
+      const point: CreatePointInput = req.body;
       const pointData = await this.ride.createPoint(point);
+      if (!pointData) throw new ApiError(409, 'Point not created');
 
-      res.status(201).json({ message: 'Point Created', data: pointData });
+      res.status(201).json({ message: 'Point Created', data: pointData[0]?.id });
     } catch (error) {
       next(error);
     }
@@ -56,8 +58,9 @@ export class RideController {
   public searchRides = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const payload: SearchPayload = req.body;
-      const result = await this.ride.searchRides(payload);
-      res.status(200).json({ message: 'Rides Found', data: result });
+      const results = await this.ride.searchRides(payload);
+
+      res.status(200).json({ message: 'Rides Found', data: results });
     } catch (error) {
       next(error)
     }

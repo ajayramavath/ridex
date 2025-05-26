@@ -1,10 +1,13 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions", "typedSql"]
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider   = "postgresql"
+  url        = env("DATABASE_URL")
+  directUrl  = env("DIRECT_URL")
+  extensions = [postgis]
 }
 
 enum PreferenceOption {
@@ -41,14 +44,13 @@ model User {
 }
 
 model Point {
-  id            String  @id @default(uuid())
-  latitude      Float   @map("lat")
-  longitude     Float   @map("long")
+  id            String                                @id @default(uuid())
+  location      Unsupported("geography(Point, 4326)")
   geohash6      String
   geohash7      String
   geohash8      String
   geohash_full  String
-  place_id      String  @unique
+  place_id      String                                @unique
   city          String
   short_address String?
   full_address  String
@@ -62,19 +64,22 @@ model Point {
   @@index([geohash7])
   @@index([geohash8])
   @@index([place_id])
+  @@index([location], type: Gist)
 }
 
 model Ride {
-  id                   String      @id @default(uuid())
+  id                   String                                    @id @default(uuid())
   departure_point_id   String
   destination_point_id String
-  departure_point      Point       @relation("DeparturePoint", fields: [departure_point_id], references: [id])
-  destination_point    Point       @relation("DestinationPoint", fields: [destination_point_id], references: [id])
+  departure_point      Point                                     @relation("DeparturePoint", fields: [departure_point_id], references: [id])
+  destination_point    Point                                     @relation("DestinationPoint", fields: [destination_point_id], references: [id])
+  route                Unsupported("geography(LineString,4326)")
+  polyline             String
   departure_time       DateTime
   available_seats      Int
-  price                Decimal     @default(0.00)
+  price                Decimal                                   @default(0.00)
   createdBy_id         String
-  createdBy            User        @relation("PostedRides", fields: [createdBy_id], references: [id], onDelete: Cascade)
+  createdBy            User                                      @relation("PostedRides", fields: [createdBy_id], references: [id], onDelete: Cascade)
   passenger            Passenger[]
   // room_id              String?
   // room                 Room        @relation(fields: [room_id], references: [id], onDelete: Cascade)
@@ -82,10 +87,7 @@ model Ride {
   reviews              Review[]
   ratings              Rating[]
 
-  @@index([departure_point_id])
-  @@index([destination_point_id])
-  @@index([departure_time])
-  @@index([available_seats])
+  @@index([route], type: Gist)
 }
 
 model Passenger {

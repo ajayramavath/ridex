@@ -21,6 +21,8 @@ interface CustomSession extends Session {
   }
 }
 
+const apiUrl = process.env.NODE_ENV === 'development' ? 'http://localhost:8080' : process.env.INTERNAL_API_URL
+
 export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
@@ -34,7 +36,7 @@ export const authOptions: NextAuthOptions = {
           throw new Error("Missing email or password");
         }
         try {
-          const res = await fetch('http://http:8080/login', {
+          const res = await fetch(`${apiUrl}/login`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",

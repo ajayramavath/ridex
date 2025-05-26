@@ -91,37 +91,37 @@ export function useAutoComplete(type: AutoCompleteType) {
     return str.charAt(0).toUpperCase() + str.slice(1);
   }
 
-  useEffect(() => {
-    if (type.includes("Departure") && departure && departure !== null && inputRef.current) {
-      inputRef.current.value = (departure as PlaceDetails).full_address
-      if (departure.place_id) {
-        createPointApi(departure as PlaceDetails)
-      }
-    }
-    if (type.includes("Destination") && destination && destination !== null && inputRef.current) {
-      inputRef.current.value = (destination as PlaceDetails).full_address
-      if (destination.place_id) {
-        createPointApi(destination as PlaceDetails)
-      }
-    }
-  }, [departure, destination])
+  // useEffect(() => {
+  //   if (type.includes("Departure") && departure && departure !== null && inputRef.current) {
+  //     inputRef.current.value = (departure as PlaceDetails).full_address
+  //     if (departure.place_id) {
+  //       createPointApi(departure as PlaceDetails)
+  //     }
+  //   }
+  //   if (type.includes("Destination") && destination && destination !== null && inputRef.current) {
+  //     inputRef.current.value = (destination as PlaceDetails).full_address
+  //     if (destination.place_id) {
+  //       createPointApi(destination as PlaceDetails)
+  //     }
+  //   }
+  // }, [departure, destination])
 
-  if (error) toast.error(error)
+  // if (error) toast.error(error)
 
-  const createPointApi = useCallback(async (pointData: PlaceDetails) => {
-    try {
-      console.log('pointData', pointData)
-      const response = await createPoint(pointData).unwrap();
-      const sliceType = type.includes('search') ? 'search' : 'create'
-      const pointType = type.includes('Departure') ? 'departure' : 'destination'
-      dispatch({
-        type: `${sliceType}Ride/set${capitalize(pointType)}PointId`,
-        payload: response.id
-      })
-    } catch (error) {
-      console.log(error)
-    }
-  }, [])
+  // const createPointApi = useCallback(async (pointData: PlaceDetails) => {
+  //   try {
+  //     console.log('pointData', pointData)
+  //     const response = await createPoint(pointData).unwrap();
+  //     const sliceType = type.includes('search') ? 'search' : 'create'
+  //     const pointType = type.includes('Departure') ? 'departure' : 'destination'
+  //     dispatch({
+  //       type: `${sliceType}Ride/set${capitalize(pointType)}PointId`,
+  //       payload: response.id
+  //     })
+  //   } catch (error) {
+  //     console.log(error)
+  //   }
+  // }, [])
 
   ////click functions for better ui
   useEffect(() => {

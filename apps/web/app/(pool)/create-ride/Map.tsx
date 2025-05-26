@@ -16,7 +16,7 @@ const Map = ({ type }: { type: "departure" | "destination" }) => {
         <div
           className="relative 3s ease-in-out animate-float repeat-infinite"
           style={{
-            willChange: 'transform' // Optimize for animation
+            willChange: 'transform'
           }}
         >
           <Image

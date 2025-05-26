@@ -18,7 +18,8 @@
     }
   },
   "devDependencies": {
-    "@ridex/typescript-config": "workspace:*"
+    "@ridex/typescript-config": "workspace:*",
+    "@types/mapbox__polyline": "^1.0.5"
   },
   "keywords": [],
   "author": "",
