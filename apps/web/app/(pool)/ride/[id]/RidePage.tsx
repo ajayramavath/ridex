@@ -33,12 +33,9 @@ const RidePage = ({ id }: { id: string }) => {
     return parseFloat(average.toFixed(1));
   }
 
-  const getVehicleName = (vehicles: Vehicle[]): string => {
-    if (vehicles.length === 0) return 'No Vehicle Information';
-    if (vehicles[0]) {
-      return `${(vehicles[0].brand)} ${vehicles[0].name} - ${vehicles[0].color}`;
-    }
-    return 'No Vehicle Information';
+  const getVehicleName = (vehicles: Vehicle | null): string => {
+    if (!vehicles) return 'No Vehicle Information';
+    return `${(vehicles.brand)} ${vehicles.name} - ${vehicles.color}`;
   }
 
   const handleOpenMaps = (placeId: string) => {
@@ -121,7 +118,7 @@ const RidePage = ({ id }: { id: string }) => {
             <Separator className='my-0' />
             <div className='text-lg flex gap-x-2 font-bold text-muted-foreground'>
               <CarIcon />
-              {getVehicleName(ride.createdBy.vehicles)}
+              {getVehicleName(ride.createdBy.vehicle)}
             </div>
           </div>
           <div className='w-full bg-card rounded-md flex flex-col gap-y-4 py-4 px-8'>

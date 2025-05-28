@@ -20,8 +20,7 @@ export class UserRoute implements Routes {
     this.router.patch(`${this.path}/update-profile-info`, AuthMiddleware, ValidationMiddleware(UpdateProfileInfoSchema), this.user.updateUserProfile);
     this.router.patch(`${this.path}/update-profile-photo`, AuthMiddleware, ValidationMiddleware(UpdateProfilePhotoSchema), this.user.uploadProfilePhoto);
     this.router.delete(`${this.path}/delete-profile-photo`, AuthMiddleware, this.user.deleteProfilePhoto);
-    this.router.post(`${this.path}/add-vehicle`, AuthMiddleware, ValidationMiddleware(AddVehicleSchema), this.user.addVehicle);
-    this.router.patch(`${this.path}/update-vehicle`, AuthMiddleware, ValidationMiddleware(UpdateVehicleSchema), this.user.updateVehicle);
+    this.router.post(`${this.path}/save-vehicle`, AuthMiddleware, ValidationMiddleware(AddVehicleSchema), this.user.saveVehicle);
     this.router.get(`${this.path}/getUserById/:id`, ValidationMiddleware(GetUserSchema, "params"), this.user.getUserById);
     this.router.patch(`${this.path}/update-preference`, AuthMiddleware, ValidationMiddleware(UpdateUserPreferenceSchema), this.user.updateUserPreference);
   }

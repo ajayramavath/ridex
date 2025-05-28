@@ -7,8 +7,9 @@
 -- @param {Decimal} $7:price
 -- @param {String} $8:createdBy_id
 -- @param {Int} $9:distance_m
--- @param {String} $10:duration_s
+-- @param {Int} $10:duration_s
 -- @param {Decimal} $11:pricePerKm
+-- @param {String} $12:uuid
 
 
 INSERT INTO "Ride" (
@@ -22,7 +23,8 @@ INSERT INTO "Ride" (
   "createdBy_id",
   "distance_m",
   "duration_s",
-  "pricePerKm"
+  "pricePerKm",
+  "id"
 )
 VALUES (
   $1,                          
@@ -35,6 +37,7 @@ VALUES (
   $8,
   $9,
   $10,
-  $11                              
+  $11,
+  $12                              
 )
 RETURNING id;

@@ -10,17 +10,18 @@
 -- @param {String} $10:full_address
 -- @param {String} $11:premise?
 -- @param {String} $12:postal_code?
+-- @param {String} $13:uuid
 
 WITH ins AS (
   INSERT INTO "Point" (
     location,
     geohash6, geohash7, geohash8, geohash_full,
-    place_id, city, short_address, full_address, premise, postal_code
+    place_id, city, short_address, full_address, premise, postal_code, id
   )
   VALUES (
     ST_SetSRID(ST_MakePoint($1, $2), 4326)::geography,
     $3, $4, $5, $6,
-    $7, $8, $9, $10, $11, $12
+    $7, $8, $9, $10, $11, $12, $13
   )
   ON CONFLICT (place_id) DO NOTHING
   RETURNING id

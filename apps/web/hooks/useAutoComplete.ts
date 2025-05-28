@@ -86,10 +86,10 @@ export function useAutoComplete(type: AutoCompleteType) {
   }
 
   useEffect(() => {
-    if (departure?.full_address && inputRef.current && type === "searchDeparture" && inputRef.current.value === "") {
+    if (type.includes('Departure') && inputRef.current && departure && departure.full_address && inputRef.current.value === "") {
       inputRef.current.value = departure.full_address;
     }
-    if (destination?.full_address && inputRef.current && type === "searchDestination" && inputRef.current.value === "") {
+    if (type.includes('Destination') && inputRef.current && destination && destination.full_address && inputRef.current.value === "") {
       inputRef.current.value = destination.full_address;
     }
   }, [departure, destination]);

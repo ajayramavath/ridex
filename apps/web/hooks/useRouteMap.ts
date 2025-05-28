@@ -45,7 +45,7 @@ export function useRouteMap() {
       ride_distance_m: routes[selectedRouteIndex]?.distanceMeters,
       ride_duration_s: routes[selectedRouteIndex]?.duration
     }))
-  }, [selectedRouteIndex])
+  }, [selectedRouteIndex, routes.length])
 
   const createMarkerFeature = useCallback((coords: [number, number], destination: boolean) => {
     const point = new Point(fromLonLat(coords));

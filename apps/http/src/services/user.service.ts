@@ -4,7 +4,7 @@ import { PrismaClientType } from "@ridex/db";
 import Container, { Service } from "typedi";
 import { ApiError } from "../error/ApiError";
 import s3Client from "../utils/s3Client";
-import { UploadUrlType, User, Vehicle, UpdateUserPreference } from '@ridex/common'
+import { UploadUrlType, User, Vehicle, UpdateUserPreference, AddVehicle } from '@ridex/common'
 import { logger } from "../utils/logger";
 
 @Service()
@@ -22,7 +22,7 @@ export class UserService {
     const findUser = await this.client.user.findUnique({
       where: { id: userId },
       include: {
-        vehicles: true,
+        vehicle: true,
         joined_rides: {
           include: {
             ride: {
@@ -120,7 +120,7 @@ export class UserService {
         refresh_token: true
       },
       include: {
-        vehicles: true,
+        vehicle: true,
       }
     })
     return user;
@@ -145,40 +145,40 @@ export class UserService {
   }
 
   public async deleteVehicle(id: string, userId: string): Promise<void> {
-    await this.client.vehicle.delete({
-      where: { id, userId }
+    await this.client.user.delete({
+      where: { id: userId, vehicleId: id }
     })
   }
 
-  public async updateVehicle(id: string, data: Partial<Pick<Vehicle, 'name' | 'brand' | 'color' | 'photo1' | 'photo2' | 'id'>>, userId: string): Promise<Vehicle> {
-    logger.info(`update data: ${JSON.stringify(data)}`);
-    const vehicle = await this.client.vehicle.update({
-      where: { id: data.id, userId },
+  public async saveVehicle(data: AddVehicle, userId: string): Promise<Vehicle> {
+    const user = await this.client.user.update({
+      where: { id: userId },
       data: {
-        name: data.name,
-        brand: data.brand,
-        color: data.color,
-        photo1: data.photo1,
-        photo2: data.photo2
+        vehicle: {
+          upsert: {
+            create: {
+              name: data.name,
+              brand: data.brand,
+              color: data.color,
+              photo1: data.photo1,
+              photo2: data.photo2,
+            },
+            update: {
+              name: data.name,
+              brand: data.brand,
+              color: data.color,
+              photo1: data.photo1,
+              photo2: data.photo2,
+            }
+          }
+        }
+      },
+      include: {
+        vehicle: true
       }
     })
-    logger.info(`updated vehicle: ${JSON.stringify(vehicle)}`);
-    return vehicle
-  }
-
-  public async addVehicle(data: Partial<Pick<Vehicle, 'name' | 'brand' | 'color' | 'photo1' | 'photo2'>>, userId: string): Promise<Vehicle> {
-    if (!data.name || !data.brand || !data.color) throw new ApiError(400, 'Invalid vehicle data');
-    const vehicle = await this.client.vehicle.create({
-      data: {
-        name: data.name,
-        brand: data.brand,
-        color: data.color,
-        photo1: data.photo1,
-        photo2: data.photo2,
-        userId
-      }
-    })
-    return vehicle
+    if (!user.vehicle) throw new ApiError(409, 'Failed to create or update vehicle')
+    return user.vehicle
   }
 
   public async updateUserPreference(data: Partial<UpdateUserPreference>, userId: string): Promise<Omit<User, 'password' | 'refresh_token'>> {

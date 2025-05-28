@@ -2,7 +2,7 @@
 import React, { useState } from 'react'
 import CreateButton, { BackButton } from './CreateButton'
 import { Input } from '@ridex/ui/components/input'
-import { IndianRupee, Loader2Icon } from 'lucide-react'
+import { IndianRupee, IndianRupeeIcon, Loader2Icon } from 'lucide-react'
 import { useAppDispatch, useAppSelector } from '@/redux/store/hooks'
 import { setPrice } from '@/redux/createRide/createRideSlice'
 import { useMediaQuery } from '@ridex/ui/hooks/useMediaQuery'
@@ -12,6 +12,8 @@ const PriceForm = () => {
   const { price, ride_distance_m } = useAppSelector(state => state.createRide)
   const dispatch = useAppDispatch()
   const [error, setError] = useState<string | null>(null)
+
+  console.log(ride_distance_m)
 
   const validatePrice = () => {
     if (price === null || price === undefined || isNaN(price)) {
@@ -49,16 +51,16 @@ const PriceForm = () => {
   }
 
   function estimateRideCosts(
-    distanceKm: number,
-    fuelCostPerLiter = 15,
-    mileageKmPerLiter = 100
+    distanceM: number,
+    fuelCostPerLiter = 100,
+    mileageKmPerLiter = 15
   ): {
     ratePerKm: number;
     estimatedCost: number;
     suggestions: [number, number];
   } {
     const ratePerKm = fuelCostPerLiter / mileageKmPerLiter;
-    const estimatedCost = (distanceKm * ratePerKm) / 3;
+    const estimatedCost = ((distanceM / 1000) * ratePerKm) / 3;
     const suggestions: [number, number] = [
       Math.floor(estimatedCost),
       Math.floor(estimatedCost + 50),
@@ -76,17 +78,17 @@ const PriceForm = () => {
       </h1>
       <div className='w-full md:w-1/3 flex flex-col gap-y-1'>
         <Input
-          placeholder=''
+          placeholder='Enter price'
           icon={<IndianRupee size={16} />}
           value={price ? price.toString() : ''}
           className='!rounded-md hover:bg-gray-100 !bg-sidebar text-ellipsis w-full text-left'
           onChange={handlePriceChange}
         />
         {error && <p className="mt-1 text-sm text-red-600">{error}</p>}
-        <p className="mt-1 text-sm text-gray-500">
-          {!ride_distance_m ? (<Loader2Icon className='animate-spin' />) : (
-            <>Suggested price: {estimateRideCosts(ride_distance_m).suggestions[0]} -
-              {estimateRideCosts(ride_distance_m).suggestions[1]} per passenger</>
+        <p className="mt-1 text-sm text-gray-500 flex items-center">
+          {!ride_distance_m ? (null) : (
+            <>Suggested price: <IndianRupeeIcon size={12} className='ml-1' /> {estimateRideCosts(ride_distance_m).suggestions[0]} -
+              <IndianRupeeIcon size={12} className='ml-' />{estimateRideCosts(ride_distance_m).suggestions[1]}</>
           )}
         </p>
       </div>

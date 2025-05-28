@@ -37,7 +37,7 @@ const RouteForm = () => {
             if (value === '1') setSelectedRouteIndex(1)
             if (value === '2') setSelectedRouteIndex(2)
           }}
-          className='self-start flex flex-row justify-around md:flex-col w-full grow px-2 md:px-10'
+          className='self-start flex flex-row justify-around md:justify-start md:flex-col w-full grow px-2 md:px-10'
         >
           {routes.map((route, index) => (
             <div key={route.description + index} className="flex items-center md:my-4 space-x-4 cursor-pointer">

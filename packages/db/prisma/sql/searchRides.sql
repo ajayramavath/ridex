@@ -116,7 +116,7 @@ FROM "Ride"    AS r
 JOIN "Point"   AS dp    ON r.departure_point_id   = dp.id
 JOIN "Point"   AS destp ON r.destination_point_id = destp.id
 JOIN "User"    AS u     ON r."createdBy_id"       = u.id
-LEFT JOIN "Vehicle" AS v ON v."userId"             = u.id
+LEFT JOIN "Vehicle" AS v ON v.id             = u."vehicleId"
 
 LEFT JOIN LATERAL (
   SELECT AVG(rat.score)::float8 AS avg_score

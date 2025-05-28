@@ -1,5 +1,5 @@
 import { baseApi } from "../store/baseApi";
-import { User, GetUserResponse, Vehicle, UploadUrlType, UpdateUserPreference } from '@ridex/common'
+import { User, GetUserResponse, Vehicle, UploadUrlType, UpdateUserPreference, AddVehicle } from '@ridex/common'
 
 const userApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
@@ -57,45 +57,13 @@ const userApi = baseApi.injectEndpoints({
         withAuth: true
       }
     }),
-    addVehicle: builder.mutation<Vehicle, Partial<Pick<Vehicle, 'name' | 'brand' | 'color' | 'photo1' | 'photo2'>>>({
+    saveVehicle: builder.mutation<Vehicle, AddVehicle>({
       query: (body) => ({
-        url: "/user/add-vehicle",
+        url: "/user/save-vehicle",
         method: "POST",
         body
       }),
       invalidatesTags: ["User"],
-      extraOptions: {
-        withAuth: true
-      }
-    }),
-    updateVehicle: builder.mutation<Vehicle, {
-      id: string,
-      data: Partial<Pick<Vehicle, 'name' | 'brand' | 'color' | 'photo1' | 'photo2'>>
-    }>({
-      query: (body) => ({
-        url: `/user/update-vehicle`,
-        method: 'PATCH',
-        body,
-      }),
-      invalidatesTags: ['User'],
-      async onQueryStarted(body, { dispatch, queryFulfilled }) {
-        const patchResult = dispatch(
-          userApi.util.updateQueryData("getUser", undefined, (draft) => {
-            const vehicleIndex = draft.vehicles.findIndex(v => v.id === body.id);
-            if (vehicleIndex !== -1) {
-              draft.vehicles[vehicleIndex] = {
-                ...draft.vehicles[vehicleIndex],
-                ...body,
-              } as Vehicle;
-            }
-          })
-        );
-        try {
-          await queryFulfilled;
-        } catch {
-          patchResult.undo();
-        }
-      },
       extraOptions: {
         withAuth: true
       }
@@ -109,7 +77,7 @@ const userApi = baseApi.injectEndpoints({
       async onQueryStarted(id, { dispatch, queryFulfilled }) {
         const patchResult = dispatch(
           userApi.util.updateQueryData('getUser', undefined, (draft) => {
-            draft.vehicles = draft.vehicles.filter(v => v.id !== id);
+            draft.vehicle = undefined;
           })
         );
         try {
@@ -179,8 +147,7 @@ export const {
   useGetUserQuery,
   useUpdateProfileInfoMutation,
   useDeleteVehicleMutation,
-  useAddVehicleMutation,
-  useUpdateVehicleMutation,
+  useSaveVehicleMutation,
   useUpdateProfilePhotoMutation,
   useLazyGetUploadUrlQuery,
   useDeleteProfilePhotoMutation,

@@ -208,7 +208,7 @@ export const GetViewUrlSchema = z.object({
 export type GetViewUrlType = z.infer<typeof GetViewUrlSchema>
 
 export type GetUserResponse = Partial<User> & {
-  vehicles: Vehicle[],
+  vehicle?: Vehicle,
   posted_rides: RideWithPoints[],
   joined_rides: PassengerWithRide[],
   ratingsGiven: Rating[],

@@ -8,6 +8,7 @@ import geohash from 'ngeohash';
 import { logger } from "../utils/logger";
 import { Result } from "@prisma/client/runtime/client";
 import polyline from "@mapbox/polyline";
+import { randomUUID } from 'crypto'
 @Service()
 export class RideService {
   private client: PrismaClientType;
@@ -42,11 +43,12 @@ export class RideService {
       throw new ApiError(409, "Invalid point data");
     logger.info(geohash.encode(latitude, longitude, 12))
     const geohashes = this.generateGeohashes(latitude, longitude);
+    const uuid = randomUUID();
     const createPointData = this.client.$queryRawTyped(createPoint(
       longitude,
       latitude,
       geohashes.geohash6, geohashes.geohash7, geohashes.geohash8, geohashes.geohash_full,
-      place_id, city, short_address, full_address, "", ""
+      place_id, city, short_address, full_address, "", "", uuid
     ))
     return createPointData;
   }
@@ -67,6 +69,9 @@ export class RideService {
 
   public async createRide({ rideData, createdBy_id }: { rideData: CreateRideInput, createdBy_id: string }):
     Promise<PrismaPromise<createRide.Result[]>> {
+    const user = await this.client.user.findUnique({ where: { id: createdBy_id }, select: { vehicleId: true } })
+    if (!user) throw new Error("User not found")
+    if (!user.vehicleId) throw new Error("User doesn't have a vehicle")
     const {
       from,
       to,
@@ -93,8 +98,10 @@ export class RideService {
         .join(',') +
       ')'
 
-    const pricePerKm = price / (rideDistance_m / 1000);
+    const rideDuration = rideDuration_s.endsWith('s') ? parseInt(rideDuration_s.slice(0, -1)) : parseInt(rideDuration_s);
 
+    const pricePerKm = price / (rideDistance_m / 1000);
+    const uuid = randomUUID();
     const createRideData = await this.client.$queryRawTyped(createRide(
       departurePointId,
       destinationPointId,
@@ -105,8 +112,9 @@ export class RideService {
       price,
       createdBy_id,
       rideDistance_m,
-      rideDuration_s,
-      pricePerKm
+      rideDuration,
+      pricePerKm,
+      uuid
     ))
     return createRideData;
   }
@@ -114,7 +122,6 @@ export class RideService {
   public async searchRides(searchPayload: SearchPayload): Promise<PrismaPromise<searchRides.Result[]>> {
     const { from_lat, from_lng, to_lat, to_lng, maxDistanceKm } = searchPayload;
     const searchResults = await this.client.$queryRawTyped(searchRides(from_lng, from_lat, maxDistanceKm * 1000, to_lng, to_lat));
-    console.log(searchResults.length)
     return searchResults;
   }
 
@@ -131,7 +138,7 @@ export class RideService {
             profile_photo: true,
             id: true,
             ratingsGot: true,
-            vehicles: true,
+            vehicle: true,
           }
         },
         passenger: {

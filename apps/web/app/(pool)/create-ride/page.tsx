@@ -7,7 +7,6 @@ import CreateRide from './CreateRide'
 
 const page = async () => {
   const session = await getAuthSession()
-  console.log("Session:", session);
   if (!session || !session.user || !session.user.name) redirect('/login')
 
   return (
