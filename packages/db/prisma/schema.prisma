@@ -75,9 +75,12 @@ model Ride {
   destination_point    Point                                     @relation("DestinationPoint", fields: [destination_point_id], references: [id])
   route                Unsupported("geography(LineString,4326)")
   polyline             String
+  distance_m           Int
+  duration_s           String
   departure_time       DateTime
   available_seats      Int
   price                Decimal                                   @default(0.00)
+  pricePerKm           Decimal
   createdBy_id         String
   createdBy            User                                      @relation("PostedRides", fields: [createdBy_id], references: [id], onDelete: Cascade)
   passenger            Passenger[]
@@ -110,7 +113,7 @@ model Vehicle {
   photo1    String?
   photo2    String?
   user      User     @relation(fields: [userId], references: [id])
-  userId    String // Foreign key
+  userId    String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

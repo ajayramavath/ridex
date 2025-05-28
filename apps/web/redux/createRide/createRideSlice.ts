@@ -76,6 +76,8 @@ export interface CreateRideState {
   destination: PlaceDetails | null,
   destinationLoading: boolean,
   polyline: string | null,
+  ride_distance_m: number | null,
+  ride_duration_s: string | null
 }
 
 const initialState: CreateRideState = {
@@ -89,6 +91,8 @@ const initialState: CreateRideState = {
   destination: null,
   destinationLoading: false,
   polyline: null,
+  ride_distance_m: null,
+  ride_duration_s: null
 }
 
 const createRideSlice = createSlice({
@@ -128,8 +132,14 @@ const createRideSlice = createSlice({
         state.destinationLoading = action.payload.loading
       }
     },
-    setPolyline: (state, action: PayloadAction<string>) => {
-      state.polyline = action.payload
+    setRoute: (state, action: PayloadAction<{
+      polyline: string,
+      ride_distance_m: number,
+      ride_duration_s: string
+    }>) => {
+      state.polyline = action.payload.polyline,
+        state.ride_distance_m = action.payload.ride_distance_m,
+        state.ride_duration_s = action.payload.ride_duration_s
     }
   }
 })
@@ -143,7 +153,7 @@ export const {
   setAvailableSeats,
   setPrice,
   setLoading,
-  setPolyline
+  setRoute
 } = createRideSlice.actions;
 
 export default createRideSlice.reducer;

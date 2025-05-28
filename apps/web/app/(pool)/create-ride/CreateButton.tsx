@@ -45,7 +45,7 @@ const CreateButton = ({
 }) => {
   const router = useRouter()
   const pathname = usePathname()
-  const { steps, departureTime, availableSeats, price, departure, destination, polyline } = useAppSelector(state => state.createRide)
+  const { steps, departureTime, availableSeats, price, departure, destination, polyline, ride_distance_m, ride_duration_s } = useAppSelector(state => state.createRide)
   const [createRide, { isLoading, isError }] = useCreateRideMutation();
   const { isMobile } = useMediaQuery()
 
@@ -66,14 +66,17 @@ const CreateButton = ({
   }
 
   const handleCreateRide = async () => {
-    if (!departure || !destination || !departureTime || !availableSeats || !price || !polyline) return
+    if (!departure || !destination || !departureTime || !availableSeats
+      || !price || !polyline || ride_distance_m === null || ride_duration_s === null) return
     const payload: CreateRideInput = {
       from: departure,
       to: destination,
       polyline,
       departureTime: new Date(departureTime),
       availableSeats,
-      price
+      price,
+      rideDistance_m: ride_distance_m,
+      rideDuration_s: ride_duration_s
     }
     try {
       const response = await createRide(payload).unwrap()

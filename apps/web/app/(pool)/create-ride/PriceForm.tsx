@@ -2,17 +2,16 @@
 import React, { useState } from 'react'
 import CreateButton, { BackButton } from './CreateButton'
 import { Input } from '@ridex/ui/components/input'
-import { IndianRupee } from 'lucide-react'
+import { IndianRupee, Loader2Icon } from 'lucide-react'
 import { useAppDispatch, useAppSelector } from '@/redux/store/hooks'
 import { setPrice } from '@/redux/createRide/createRideSlice'
 import { useMediaQuery } from '@ridex/ui/hooks/useMediaQuery'
 import { cn } from '@ridex/ui/lib/utils'
 
 const PriceForm = () => {
-  const { price } = useAppSelector(state => state.createRide)
+  const { price, ride_distance_m } = useAppSelector(state => state.createRide)
   const dispatch = useAppDispatch()
   const [error, setError] = useState<string | null>(null)
-  const { isMobile } = useMediaQuery()
 
   const validatePrice = () => {
     if (price === null || price === undefined || isNaN(price)) {
@@ -48,6 +47,25 @@ const PriceForm = () => {
     setError(null)
     dispatch(setPrice(numericValue))
   }
+
+  function estimateRideCosts(
+    distanceKm: number,
+    fuelCostPerLiter = 15,
+    mileageKmPerLiter = 100
+  ): {
+    ratePerKm: number;
+    estimatedCost: number;
+    suggestions: [number, number];
+  } {
+    const ratePerKm = fuelCostPerLiter / mileageKmPerLiter;
+    const estimatedCost = (distanceKm * ratePerKm) / 3;
+    const suggestions: [number, number] = [
+      Math.floor(estimatedCost),
+      Math.floor(estimatedCost + 50),
+    ];
+    return { ratePerKm, estimatedCost, suggestions };
+  }
+
   return (
     <div className={cn('flex h-full items-center py-10 px-4 flex-col gap-y-10')}>
       <h1 className='text-lg md:text-3xl font-bold relative w-full flex justify-center'>
@@ -66,7 +84,10 @@ const PriceForm = () => {
         />
         {error && <p className="mt-1 text-sm text-red-600">{error}</p>}
         <p className="mt-1 text-sm text-gray-500">
-          Suggested price: &#8377;500 - &#8377;700 per passenger
+          {!ride_distance_m ? (<Loader2Icon className='animate-spin' />) : (
+            <>Suggested price: {estimateRideCosts(ride_distance_m).suggestions[0]} -
+              {estimateRideCosts(ride_distance_m).suggestions[1]} per passenger</>
+          )}
         </p>
       </div>
       <CreateButton validate={validatePrice} />

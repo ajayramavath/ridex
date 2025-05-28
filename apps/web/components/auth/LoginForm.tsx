@@ -25,21 +25,18 @@ const LoginForm = () => {
 
   const onSubmit = async (data: any) => {
     setIsLoading(true);
-    console.log("Final API URL:", `${process.env.NEXT_PUBLIC_API_URL}/login`);
     const result = await signIn("credentials", {
       email: data.email,
       password: data.password,
       redirect: false,
     })
     if (result?.error) {
-      console.log(result)
       toast.error(result.error)
     } else {
       toast.success("Login Successful");
       const redirectPath = callbackUrl.startsWith('http')
         ? new URL(callbackUrl).pathname
         : callbackUrl;
-      console.log("Redirecting to:", redirectPath);
       window.location.href = redirectPath;
     }
     setIsLoading(false);

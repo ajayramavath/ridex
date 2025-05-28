@@ -1,25 +1,30 @@
-import { RideSearchResult, SearchPayload } from "@ridex/common";
+import { RideSearch, RideSearchResult, SearchPayload } from "@ridex/common";
 import { baseApi } from "../store/baseApi";
 
 const searchRideApi = baseApi.injectEndpoints({
+  overrideExisting: true,
   endpoints: (builder) => ({
-    searchRide: builder.mutation<RideSearchResult, SearchPayload>({
+    searchRides: builder.query<{ "message": string, "data": RideSearch[] }, SearchPayload>({
       query: (body) => ({
         url: `/rides/search`,
         method: 'POST',
         body: {
-          from: body.from,
-          to: body.to,
+          from_lat: body.from_lat,
+          from_lng: body.from_lng,
+          to_lat: body.to_lat,
+          to_lng: body.to_lng,
           departureTime: new Date(body.departureTime),
           availableSeats: body.availableSeats,
           maxDistanceKm: body.maxDistanceKm,
         }
       }),
-      transformResponse: (response: { data: RideSearchResult }) => response.data
+      keepUnusedDataFor: 300,
+      providesTags: [{ type: 'Search', id: 'LIST' }],
     })
   })
 })
 
 export const {
-  useSearchRideMutation
+  useSearchRidesQuery,
+  useLazySearchRidesQuery
 } = searchRideApi

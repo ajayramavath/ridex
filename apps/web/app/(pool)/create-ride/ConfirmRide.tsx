@@ -10,8 +10,7 @@ import { cn } from '@ridex/ui/lib/utils'
 const ConfirmRide = () => {
   const { data: session } = useSession()
   if (!session) redirect('/login')
-  const { departure, destination, departureTime, availableSeats, price, departurePointId, destinationPointId } = useAppSelector(state => state.createRide)
-  const { isMobile } = useMediaQuery()
+  const { departure, destination, departureTime, availableSeats, price } = useAppSelector(state => state.createRide)
 
   return (
     <div className={cn('flex h-full items-center py-10 px-4 flex-col gap-y-10')}>

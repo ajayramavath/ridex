@@ -5,41 +5,29 @@ import { SearchIcon } from 'lucide-react'
 import { Button } from '@ridex/ui/components/button'
 import DateInput from './components/DateInput'
 import AutoCompleteInput from '../AutoCompleteInput'
-import { useSearchRideMutation } from '@/redux/searchRide/searchRideApi'
-import { useAppDispatch, useAppSelector } from '@/redux/store/hooks'
-import { SearchPayload } from '@ridex/common'
-import { useCreatePointMutation } from '@/redux/createRide/createRideApi'
-import { setSearchResults } from '@/redux/searchRide/searchRideSlice'
+import { useLazySearchRidesQuery } from '@/redux/searchRide/searchRideApi'
+import { useAppSelector } from '@/redux/store/hooks'
+import { useRouter } from 'next/navigation'
 
 
 const Search = ({ onSearchComplete }: { onSearchComplete?: () => void }) => {
-  const dispatch = useAppDispatch()
-  const { departure, destination, departureDate, availableSeats, departurePointId, destinationPointId } = useAppSelector(state => state.searchRide)
-  const [searchRide, { isLoading }] = useSearchRideMutation({
-    fixedCacheKey: "searchRideResults"
-  })
-  const [createPoint, { isLoading: isCreatingPoint }] = useCreatePointMutation({
-    fixedCacheKey: "createPoint"
-  })
+  const router = useRouter()
+  const { departure, destination, departureDate, availableSeats } = useAppSelector(state => state.searchRide)
+  const [, { isLoading }] = useLazySearchRidesQuery()
 
   const handleSearch = async () => {
-    if (!departure || !destination || !departureDate || !availableSeats || !departurePointId || !destinationPointId) return
-    const payload: SearchPayload = {
-      from_lat: departure.latitude,
-      from_lng: departure.longitude,
-      to_lat: destination.latitude,
-      to_lng: destination.longitude,
-      departureTime: departureDate,
-      availableSeats,
-      maxDistanceKm: 20
-    }
+    if (!departure || !destination || !departureDate || !availableSeats) return
+    const params = new URLSearchParams({
+      from_lat: (departure.latitude).toString(),
+      from_lng: (departure.longitude).toString(),
+      to_lat: (destination.latitude).toString(),
+      to_lng: (destination.longitude).toString(),
+      departureTime: (departureDate).toString(),
+      availableSeats: availableSeats.toString(),
+      maxDistanceKm: "20"
+    })
     if (onSearchComplete) onSearchComplete();
-    try {
-      const response = await searchRide(payload).unwrap()
-      dispatch(setSearchResults(response))
-    } catch (error) {
-      console.log(error);
-    }
+    router.push(`/search?${params.toString()}`)
   }
   return (
     <div className='grid grid-cols-1 space-y-1 md:space-y-0 w-full md:grid-cols-3 lg:grid-cols-[1.5fr_1.5fr_1fr_1fr_0.5fr] '>
@@ -61,8 +49,8 @@ const Search = ({ onSearchComplete }: { onSearchComplete?: () => void }) => {
         icon={<SearchIcon />}
         className='my-5 md:my-1 md:h-auto bg-accent/20 text-accent dark:bg-primary/20 dark:text-primary shadow-none'
         onClick={handleSearch}
-        isLoading={isLoading || isCreatingPoint}
-        disabled={isLoading || !departurePointId || !destinationPointId}
+        isLoading={isLoading}
+        disabled={isLoading}
       >
         Search
       </Button>

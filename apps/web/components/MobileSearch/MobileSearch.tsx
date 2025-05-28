@@ -61,7 +61,7 @@ const MobileSearch = () => {
           </div>
         </DrawerTrigger>
         <DrawerContent className='h-full'>
-          <div className='h-full mx-auto text-center w-full max-w-sm'>
+          <div className='h-full mx-auto text-center w-full px-4 max-w-sm'>
             <DrawerHeader>
               <DrawerTitle>Search</DrawerTitle>
               <DrawerDescription>Search for rides by entering your departure and destination locations</DrawerDescription>

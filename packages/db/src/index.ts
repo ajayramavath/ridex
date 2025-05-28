@@ -1,6 +1,6 @@
 export * from '@prisma/client';
 import { Prisma, PrismaClient } from '@prisma/client';
-export * from '@prisma/client/sql'
+export { searchRides, createPoint, createRide } from '@prisma/client/sql'
 
 class PrismaService {
   private static instance: PrismaClient

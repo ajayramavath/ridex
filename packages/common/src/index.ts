@@ -76,6 +76,8 @@ export const CreateRideSchema = z.object({
   departureTime: z.coerce.date(),
   availableSeats: z.number().min(1).max(4),
   price: z.coerce.number().min(0),
+  rideDistance_m: z.number().min(0),
+  rideDuration_s: z.string()
 })
 
 export type CreateRideInput = z.infer<typeof CreateRideSchema>
@@ -101,7 +103,7 @@ export const SearchPayloadSchema = z.object({
   from_lng: z.number().min(-90).max(90),
   to_lat: z.number().min(-90).max(90),
   to_lng: z.number().min(-90).max(90),
-  departureTime: z.coerce.date(),
+  departureTime: z.string(),
   availableSeats: z.number().min(1).max(4),
   maxDistanceKm: z.number().min(0).default(20),
   page: z.number().optional(),
@@ -110,11 +112,47 @@ export const SearchPayloadSchema = z.object({
 
 export type SearchPayload = z.infer<typeof SearchPayloadSchema>
 
+export interface RideSearch {
+  id: string;
+  departure_time: string;
+  available_seats: number;
+  price: string;
+  duration_s: string;
+  distance_m: number;
+
+  segment_distance_m: string;
+  segment_price: string;
+  segment_duration_s: string;
+  is_full_route: boolean;
+
+  departure_point_id: string;
+  departure_place_id: string;
+  departure_city: string;
+  departure_full_address: string;
+  departure_short_address: string;
+
+  destination_point_id: string;
+  destination_place_id: string;
+  destination_city: string;
+  destination_full_address: string;
+  destination_short_address: string;
+
+  creator_id: string;
+  creator_name: string;
+  creator_photo: string;
+  creator_avg_rating: string;
+  creator_total_reviews: string;
+
+  vehicle_brand: string;
+  vehicle_name: string;
+  vehicle_color: string;
+
+  departure_distance_m: string;
+  destination_distance_m: string;
+}
+
 export interface RideSearchResult {
-  results: RideResult[];
-  total: number;
-  page: number;
-  limit: number;
+  results: RideSearch[]
 }
 
 export const UpdateUserPreferenceSchema = z.object({

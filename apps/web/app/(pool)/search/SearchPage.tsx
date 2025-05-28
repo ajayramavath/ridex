@@ -2,28 +2,25 @@
 import React, { useEffect, useState } from 'react'
 import Search from '@/components/search'
 import SearchResults from './SearchResults'
-import { useSearchRideMutation } from '@/redux/searchRide/searchRideApi'
+import { useSearchRidesQuery } from '@/redux/searchRide/searchRideApi'
 import Hero from '@/components/Hero'
 import FilterComponent from './FilterComponent'
 import { Separator } from '@ridex/ui/components/separator'
 import { useMediaQuery } from '@ridex/ui/hooks/useMediaQuery'
 import { cn } from '@ridex/ui/lib/utils'
 import MobileSearch from '@/components/MobileSearch/MobileSearch'
+import { useSearchParams } from 'next/navigation'
+import { SearchPayload } from '@ridex/common'
+import { persistor } from '@/redux/store/store'
+import { Skeleton } from '@ridex/ui/components/skeleton'
+import { useSearchPayload } from '@/hooks/useSearchPayload'
 
 const SearchPage = () => {
-  const [hasSearched, setHasSearched] = useState(false);
-  const [searchRide, { data: searchResults, isLoading, isError, isUninitialized }] = useSearchRideMutation({
-    fixedCacheKey: "searchRideResults"
-  })
-  const { isMobile } = useMediaQuery()
+  const { payload, isValid } = useSearchPayload()
+  const { data: searchResults, isLoading, isError, isUninitialized } = useSearchRidesQuery(payload ?? ({} as any), { skip: !isValid })
+  //console.log(isUninitialized, searchResults, isValid, payload)
 
-  useEffect(() => {
-    if (!isUninitialized) {
-      setHasSearched(true);
-    }
-  }, [isUninitialized]);
-
-  if (!hasSearched) {
+  if (isUninitialized) {
     return (
       <div className='w-full h-full'>
         <Hero />
@@ -44,7 +41,7 @@ const SearchPage = () => {
       </div>
       <Separator className='hidden md:block' />
       <div className='w-full'>
-        <SearchResults />
+        <SearchResults data={searchResults?.data} isLoading={isLoading} isError={isError} />
       </div>
     </div>
   )

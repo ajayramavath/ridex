@@ -1,4 +1,5 @@
-import { client, GetRideResult, PrismaClientType, createPoint, PrismaPromise, createRide, searchRides } from "@ridex/db";
+import { client, GetRideResult, PrismaClientType, PrismaPromise } from "@ridex/db";
+import { createRide, searchRides, createPoint } from '@prisma/client/sql'
 import type { RideWhereInput, User } from '@ridex/common'
 import { CreateRideInput, Point, Ride, RideSearchResult, SearchPayload, RideWithPoints, RideResult } from "@ridex/common"
 import Container, { Inject, Service } from "typedi";
@@ -41,11 +42,11 @@ export class RideService {
       throw new ApiError(409, "Invalid point data");
     logger.info(geohash.encode(latitude, longitude, 12))
     const geohashes = this.generateGeohashes(latitude, longitude);
-    const createPointData = client.$queryRawTyped(createPoint(
+    const createPointData = this.client.$queryRawTyped(createPoint(
       longitude,
       latitude,
       geohashes.geohash6, geohashes.geohash7, geohashes.geohash8, geohashes.geohash_full,
-      place_id, city, short_address, full_address, premise || null, postal_code || null
+      place_id, city, short_address, full_address, "", ""
     ))
     return createPointData;
   }
@@ -72,7 +73,9 @@ export class RideService {
       polyline: routePolyline,
       departureTime,
       availableSeats,
-      price
+      price,
+      rideDistance_m,
+      rideDuration_s
     } = rideData;
 
     const departureResult = await this.createPoint(from);
@@ -90,22 +93,28 @@ export class RideService {
         .join(',') +
       ')'
 
+    const pricePerKm = price / (rideDistance_m / 1000);
+
     const createRideData = await this.client.$queryRawTyped(createRide(
       departurePointId,
       destinationPointId,
       decoded,
       routePolyline,
-      departureTime,
+      new Date(departureTime),
       availableSeats,
       price,
-      createdBy_id
+      createdBy_id,
+      rideDistance_m,
+      rideDuration_s,
+      pricePerKm
     ))
     return createRideData;
   }
 
   public async searchRides(searchPayload: SearchPayload): Promise<PrismaPromise<searchRides.Result[]>> {
     const { from_lat, from_lng, to_lat, to_lng, maxDistanceKm } = searchPayload;
-    const searchResults = this.client.$queryRawTyped(searchRides(from_lng, from_lat, maxDistanceKm * 1000, to_lng, to_lat));
+    const searchResults = await this.client.$queryRawTyped(searchRides(from_lng, from_lat, maxDistanceKm * 1000, to_lng, to_lat));
+    console.log(searchResults.length)
     return searchResults;
   }
 

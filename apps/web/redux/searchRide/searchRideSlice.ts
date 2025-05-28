@@ -1,11 +1,9 @@
 import { PlaceDetails } from '@/actions/getPlaceDetails'
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import { RideSearchResult } from '@ridex/common'
+import { RideSearch, RideSearchResult } from '@ridex/common'
 
 export interface SearchRideState {
   step: number,
-  departurePointId: string | null,
-  destinationPointId: string | null,
   departureDate: Date,
   availableSeats: number,
   price: number | null,
@@ -13,13 +11,11 @@ export interface SearchRideState {
   departureLoading: boolean,
   destination: PlaceDetails | null,
   destinationLoading: boolean,
-  searchResults: RideSearchResult | null,
+  searchResults: RideSearch[] | null,
 }
 
 const initialState: SearchRideState = {
   step: 1,
-  departurePointId: null,
-  destinationPointId: null,
   departureDate: new Date(),
   availableSeats: 1,
   price: null,
@@ -43,12 +39,6 @@ const searchRideSlice = createSlice({
     setDestination: (state, action: PayloadAction<PlaceDetails>) => {
       state.destination = action.payload
     },
-    setDeparturePointId: (state, action: PayloadAction<string>) => {
-      state.departurePointId = action.payload
-    },
-    setDestinationPointId: (state, action: PayloadAction<string>) => {
-      state.destinationPointId = action.payload
-    },
     setDate: (state, action: PayloadAction<Date>) => {
       state.departureDate = action.payload
     },
@@ -64,8 +54,8 @@ const searchRideSlice = createSlice({
     setDestinationLoading: (state, action: PayloadAction<boolean>) => {
       state.destinationLoading = action.payload
     },
-    setSearchResults: (state, action: PayloadAction<RideSearchResult>) => {
-      state.searchResults = action.payload
+    setSearchResults: (state, action: PayloadAction<{ "message": string, "data": RideSearch[] }>) => {
+      state.searchResults = action.payload.data
     }
   }
 })
@@ -74,8 +64,6 @@ export const {
   setStep,
   setDeparture,
   setDestination,
-  setDestinationPointId,
-  setDeparturePointId,
   setDate,
   setAvailableSeats,
   setPrice,

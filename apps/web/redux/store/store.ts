@@ -1,5 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit';
-import searchRideReducer from '../searchRide/searchRideSlice';
+import searchRideReducer, { SearchRideState } from '../searchRide/searchRideSlice';
 import autoCompleteReducer from '../common/autoComplete';
 import createRideReducer, { CreateRideState } from '../createRide/createRideSlice';
 import { createTransform, persistReducer } from 'redux-persist';
@@ -7,7 +7,7 @@ import storage from 'redux-persist/lib/storage'
 import persistStore from 'redux-persist/lib/persistStore';
 import { baseApi } from './baseApi'
 
-const rideTransform = createTransform(
+const createRideTransform = createTransform(
   (inboundState: CreateRideState) => {
     return {
       ...inboundState,
@@ -23,20 +23,44 @@ const rideTransform = createTransform(
   { whitelist: ['createRide'] }
 );
 
-const persistConfig = {
+const searchRideTransform = createTransform(
+  (inboundState: SearchRideState) => {
+    return {
+      ...inboundState,
+      departureDate: inboundState.departureDate?.toISOString() || null,
+    };
+  },
+  (outboundState: any) => {
+    return {
+      ...outboundState,
+      departureDate: outboundState.departureDate ? new Date(outboundState.departureDate) : null,
+    };
+  },
+  { whitelist: ['createRide'] }
+);
+
+const createRidePersistConfig = {
   key: 'createRide',
   storage,
-  transforms: [rideTransform],
+  transforms: [createRideTransform],
   blacklist: ['departureLoading', 'destinationLoading']
 };
 
-const persistedReducer = persistReducer(persistConfig, createRideReducer);
+const searchRidePersistConfig = {
+  key: 'searchRide',
+  storage,
+  transforms: [searchRideTransform],
+  blacklist: ['departureLoading', 'destinationLoading']
+};
+
+const persistedCreateRideReducer = persistReducer(createRidePersistConfig, createRideReducer);
+const persistedSearchRideReducer = persistReducer(searchRidePersistConfig, searchRideReducer);
 
 const rootReducer = {
   [baseApi.reducerPath]: baseApi.reducer,
-  searchRide: searchRideReducer,
+  searchRide: persistedSearchRideReducer,
   autoComplete: autoCompleteReducer,
-  createRide: persistedReducer,
+  createRide: persistedCreateRideReducer,
 };
 
 export const store = configureStore({

@@ -21,7 +21,7 @@ RUN corepack enable && corepack prepare pnpm@latest --activate
 COPY --from=builder /app/out/json ./
 RUN pnpm install --frozen-lockfile
 COPY --from=builder /app/out/full/. .
-RUN cd ./packages/db && pnpm exec prisma generate
+RUN cd ./packages/db && pnpm exec prisma generate --sql
 RUN pnpm turbo build --filter=@ridex/web...
 
 # ----------------------

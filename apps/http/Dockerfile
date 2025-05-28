@@ -22,7 +22,7 @@ COPY --from=builder /app/out/json ./
 RUN pnpm install
 
 COPY --from=builder /app/out/full/. .
-RUN cd ./packages/db && pnpm exec prisma generate
+RUN cd ./packages/db && pnpm exec prisma generate --sql
 
 RUN pnpm turbo build --filter=@ridex/http...
 

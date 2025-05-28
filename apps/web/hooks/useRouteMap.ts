@@ -17,7 +17,7 @@ import { LineString, Point } from "ol/geom";
 import { getMapCenter, getZoomLevel, haversineDistance } from "@/lib/mapUtils";
 import * as olEasing from 'ol/easing';
 import Icon from "ol/style/Icon";
-import { setPolyline } from "@/redux/createRide/createRideSlice";
+import { setRoute } from "@/redux/createRide/createRideSlice";
 
 export function useRouteMap() {
   const mapRef = useRef<HTMLDivElement>(null);
@@ -40,7 +40,11 @@ export function useRouteMap() {
 
   useEffect(() => {
     if (!routes[selectedRouteIndex]?.polyline.encodedPolyline) return
-    dispatch(setPolyline(routes[selectedRouteIndex]?.polyline.encodedPolyline))
+    dispatch(setRoute({
+      polyline: routes[selectedRouteIndex]?.polyline.encodedPolyline,
+      ride_distance_m: routes[selectedRouteIndex]?.distanceMeters,
+      ride_duration_s: routes[selectedRouteIndex]?.duration
+    }))
   }, [selectedRouteIndex])
 
   const createMarkerFeature = useCallback((coords: [number, number], destination: boolean) => {

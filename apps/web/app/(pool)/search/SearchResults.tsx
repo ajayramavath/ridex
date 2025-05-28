@@ -1,10 +1,8 @@
 'use client'
-import { useAppSelector } from '@/redux/store/hooks'
 import React from 'react'
 import SingleSearch from './SingleSearch'
-import { useSearchRideMutation } from '@/redux/searchRide/searchRideApi'
-import { toast } from '@ridex/ui/components/sonner'
-import { Skeleton } from '@ridex/ui/components/skeleton'
+import { RideSearch } from '@ridex/common'
+import { Skeleton } from '@ridex/ui/components/skeleton';
 
 const NoResultsComponent = () => (
   <div className="text-center py-12">
@@ -15,10 +13,8 @@ const NoResultsComponent = () => (
   </div>
 );
 
-const SearchResults = () => {
-  const [searchRide, { data: searchResults, isLoading, isError }] = useSearchRideMutation({
-    fixedCacheKey: "searchRideResults"
-  })
+const SearchResults = ({ data, isLoading, isError }: { data?: RideSearch[], isLoading: boolean, isError: boolean }) => {
+
   if (isLoading) {
     return (
       <div className='flex flex-col gap-y-4'>
@@ -29,13 +25,19 @@ const SearchResults = () => {
     )
   }
 
-  if (!searchResults?.results || searchResults.results.length === 0) {
+  if (isError) {
+    return <div className='text-red-400'>
+      Oh no! Something went wrong. Please try again later.
+    </div>
+  }
+
+  if (!data || data.length === 0) {
     return <NoResultsComponent />;
   }
 
   return (
     <div>
-      {searchResults?.results.map((result) => {
+      {data.map((result) => {
         return (
           <SingleSearch key={result.id} result={result} />
         )

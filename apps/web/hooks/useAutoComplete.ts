@@ -5,8 +5,6 @@ import { useAppDispatch, useAppSelector } from "@/redux/store/hooks";
 import { toast } from "@ridex/ui/components/sonner";
 import { useDebounce } from "@ridex/ui/hooks/useDebounce";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useCreatePointMutation } from '@/redux/createRide/createRideApi'
-import { setDeparturePointId } from "@/redux/searchRide/searchRideSlice";
 
 export function useAutoComplete(type: AutoCompleteType) {
   const dispatch = useAppDispatch();
@@ -15,10 +13,6 @@ export function useAutoComplete(type: AutoCompleteType) {
     _autocomplete_cache: autoCompleteCache,
     _place_details_cache: placeDetailsCache,
   } = useAppSelector(state => state.autoComplete);
-  const [createPoint, { isSuccess, isLoading, isError }] = useCreatePointMutation({
-    fixedCacheKey: "createPoint",
-  })
-
 
   const currentSlice = type.includes('search') ? 'searchRide' : 'createRide'
 
@@ -91,37 +85,14 @@ export function useAutoComplete(type: AutoCompleteType) {
     return str.charAt(0).toUpperCase() + str.slice(1);
   }
 
-  // useEffect(() => {
-  //   if (type.includes("Departure") && departure && departure !== null && inputRef.current) {
-  //     inputRef.current.value = (departure as PlaceDetails).full_address
-  //     if (departure.place_id) {
-  //       createPointApi(departure as PlaceDetails)
-  //     }
-  //   }
-  //   if (type.includes("Destination") && destination && destination !== null && inputRef.current) {
-  //     inputRef.current.value = (destination as PlaceDetails).full_address
-  //     if (destination.place_id) {
-  //       createPointApi(destination as PlaceDetails)
-  //     }
-  //   }
-  // }, [departure, destination])
-
-  // if (error) toast.error(error)
-
-  // const createPointApi = useCallback(async (pointData: PlaceDetails) => {
-  //   try {
-  //     console.log('pointData', pointData)
-  //     const response = await createPoint(pointData).unwrap();
-  //     const sliceType = type.includes('search') ? 'search' : 'create'
-  //     const pointType = type.includes('Departure') ? 'departure' : 'destination'
-  //     dispatch({
-  //       type: `${sliceType}Ride/set${capitalize(pointType)}PointId`,
-  //       payload: response.id
-  //     })
-  //   } catch (error) {
-  //     console.log(error)
-  //   }
-  // }, [])
+  useEffect(() => {
+    if (departure?.full_address && inputRef.current && type === "searchDeparture" && inputRef.current.value === "") {
+      inputRef.current.value = departure.full_address;
+    }
+    if (destination?.full_address && inputRef.current && type === "searchDestination" && inputRef.current.value === "") {
+      inputRef.current.value = destination.full_address;
+    }
+  }, [departure, destination]);
 
   ////click functions for better ui
   useEffect(() => {
