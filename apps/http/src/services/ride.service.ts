@@ -1,6 +1,6 @@
 import { client, GetRideResult, PrismaClientType, PrismaPromise } from "@ridex/db";
 import { createRide, searchRides, createPoint } from '@prisma/client/sql'
-import type { RideWhereInput, User } from '@ridex/common'
+import type { RideSearch, RideWhereInput, User } from '@ridex/common'
 import { CreateRideInput, Point, Ride, RideSearchResult, SearchPayload, RideWithPoints, RideResult } from "@ridex/common"
 import Container, { Inject, Service } from "typedi";
 import { ApiError } from "../error/ApiError";
@@ -119,10 +119,65 @@ export class RideService {
     return createRideData;
   }
 
-  public async searchRides(searchPayload: SearchPayload): Promise<PrismaPromise<searchRides.Result[]>> {
+  public async searchRides(searchPayload: SearchPayload): Promise<PrismaPromise<RideSearch[]>> {
     const { from_lat, from_lng, to_lat, to_lng, maxDistanceKm } = searchPayload;
     const searchResults = await this.client.$queryRawTyped(searchRides(from_lng, from_lat, maxDistanceKm * 1000, to_lng, to_lat));
-    return searchResults;
+
+    const response: RideSearch[] = searchResults.map(ride => {
+      return {
+        ride: {
+          id: ride.id,
+          departureTime: ride.departure_time,
+          availableSeats: ride.available_seats,
+          price: Number(ride.price),
+          distance_m: Number(ride.distance_m),
+          duration_s: Number(ride.duration_s),
+          isFullRoute: ride.is_full_route
+        },
+        segment: {
+          distance_m: Number(ride.segment_distance_m),
+          duration_s: Number(ride.segment_duration_s),
+          price: Number(ride.segment_price),
+          pickup: { lat: Number(ride.pickup_lat), lng: Number(ride.pickup_lng) },
+          dropoff: { lat: Number(ride.dropoff_lat), lng: Number(ride.dropoff_lng) }
+        },
+        departurePoint: {
+          id: ride.departure_point_id,
+          placeId: ride.departure_place_id,
+          city: ride.departure_city,
+          fullAddress: ride.departure_full_address,
+          shortAddress: ride.departure_short_address,
+          location: { lat: Number(ride.departure_lat), lng: Number(ride.departure_lng) },
+          distanceM: Number(ride.departure_distance_m)
+        },
+        destinationPoint: {
+          id: ride.destination_point_id,
+          placeId: ride.destination_place_id,
+          city: ride.destination_city,
+          fullAddress: ride.destination_full_address,
+          shortAddress: ride.destination_short_address,
+          location: { lat: Number(ride.destination_lat), lng: Number(ride.destination_lng) },
+          distanceM: Number(ride.destination_distance_m)
+        },
+        creator: {
+          id: ride.creator_id,
+          name: ride.creator_name,
+          photo: ride.creator_photo,
+          avgRating: Number(ride.creator_avg_rating),
+          totalReviews: Number(ride.creator_total_reviews),
+          vehicle: {
+            id: ride.vehicle_id,
+            brand: ride.vehicle_brand,
+            name: ride.vehicle_name,
+            color: ride.vehicle_color,
+            photo1: ride.vehicle_photo1,
+            photo2: ride.vehicle_photo2
+          }
+        }
+      }
+    })
+
+    return response;
   }
 
 

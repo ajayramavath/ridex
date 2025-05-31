@@ -113,43 +113,57 @@ export const SearchPayloadSchema = z.object({
 export type SearchPayload = z.infer<typeof SearchPayloadSchema>
 
 export interface RideSearch {
-  id: string;
-  departure_time: string;
-  available_seats: number;
-  price: string;
-  duration_s: string;
-  distance_m: number;
-
-  segment_distance_m: string;
-  segment_price: string;
-  segment_duration_s: string;
-  is_full_route: boolean;
-
-  departure_point_id: string;
-  departure_place_id: string;
-  departure_city: string;
-  departure_full_address: string;
-  departure_short_address: string;
-
-  destination_point_id: string;
-  destination_place_id: string;
-  destination_city: string;
-  destination_full_address: string;
-  destination_short_address: string;
-
-  creator_id: string;
-  creator_name: string;
-  creator_photo: string;
-  creator_avg_rating: string;
-  creator_total_reviews: string;
-
-  vehicle_brand: string;
-  vehicle_name: string;
-  vehicle_color: string;
-
-  departure_distance_m: string;
-  destination_distance_m: string;
+  ride: {
+    id: string;
+    departureTime: Date;
+    availableSeats: number;
+    price: number;
+    distance_m: number;
+    duration_s: number;
+    isFullRoute: boolean | null;
+  };
+  segment: {
+    distance_m: number;
+    duration_s: number;
+    price: number;
+    pickup: { lat: number; lng: number };
+    dropoff: { lat: number; lng: number };
+  };
+  departurePoint: {
+    id: string;
+    placeId: string;
+    city: string;
+    fullAddress: string;
+    shortAddress: string | null;
+    location: { lat: number; lng: number };
+    distanceM: number;
+  };
+  destinationPoint: {
+    id: string;
+    placeId: string;
+    city: string;
+    fullAddress: string;
+    shortAddress: string | null;
+    location: { lat: number; lng: number };
+    distanceM: number;
+  };
+  creator: {
+    id: string;
+    name: string;
+    photo: string | null;
+    avgRating: number;
+    totalReviews: number;
+    vehicle: {
+      id: string;
+      brand: string;
+      name: string;
+      color: string;
+      photo1: string | null;
+      photo2: string | null;
+    } | null;
+  };
 }
+
 
 export interface RideSearchResult {
   results: RideSearch[]

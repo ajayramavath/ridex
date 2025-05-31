@@ -8,14 +8,30 @@ import React from 'react'
 import Rating, { StarIcon } from './Rating'
 import { useRouter } from 'next/navigation'
 import { useMediaQuery } from '@ridex/ui/hooks/useMediaQuery'
+import { useAppSelector } from '@/redux/store/hooks'
 
 const SingleSearch = ({ result }: { result: RideSearch }) => {
   const router = useRouter()
   const { isMobile } = useMediaQuery()
+  const { departure, destination, departureDate, availableSeats } = useAppSelector(state => state.searchRide)
+
+  const handleClick = () => {
+    if (!departure || !destination || !departureDate || !availableSeats) return
+    const params = new URLSearchParams({
+      from_lat: (departure.latitude).toString(),
+      from_lng: (departure.longitude).toString(),
+      to_lat: (destination.latitude).toString(),
+      to_lng: (destination.longitude).toString(),
+      departureTime: (departureDate).toString(),
+      availableSeats: availableSeats.toString(),
+      maxDistanceKm: "20"
+    })
+    router.push(`/ride/${result.id}?${params.toString()}`)
+  }
 
   return (
     <div
-      onClick={() => router.push(`/ride/${result.id}`)}
+      onClick={handleClick}
       className='flex w-full bg-card rounded-xl md:h-[220px] cursor-pointer'>
       <div className='flex flex-col grow w-full'>
         <div className='flex w-full'>
