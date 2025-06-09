@@ -8,7 +8,7 @@ const fontRoboto = Roboto({
 
 const Logo = () => {
   return (
-    <div className={`text-xl md:text-2xl font-bold ${fontRoboto.variable} font-mono`}>
+    <div className={`text-lg md:text-2xl font-bold ${fontRoboto.variable} font-mono`}>
       Ride<span className='text-accent'>X</span>
     </div>
   )

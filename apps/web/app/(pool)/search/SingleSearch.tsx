@@ -26,7 +26,7 @@ const SingleSearch = ({ result }: { result: RideSearch }) => {
       availableSeats: availableSeats.toString(),
       maxDistanceKm: "20"
     })
-    router.push(`/ride/${result.id}?${params.toString()}`)
+    router.push(`/ride/${result.ride.id}?${params.toString()}`)
   }
 
   return (
@@ -44,31 +44,31 @@ const SingleSearch = ({ result }: { result: RideSearch }) => {
             <div className='flex flex-col justify-between gap-y-4 md:gap-y-8'>
               <div className='flex flex-col'>
                 <span className="font-bold text-xs md:text-lg">
-                  {result.departure_city}
+                  {result.departurePoint.city}
                 </span>
                 <div className='flex flex-col md:flex-row gap-x-2 items-start md:items-center text-[8px] text-muted-foreground'>
                   <div className='flex gap-x-2 items-center'>
                     <Car size={isMobile ? 10 : 18} className={cn('text-accent dark:text-primary')} />
-                    <Car size={isMobile ? 10 : 18} className={cn(parseInt(result.departure_distance_m) / 1000 > 5 ? 'text-accent dark:text-primary' : 'text-gray-300 dark:text-gray-700')} />
-                    <Car size={isMobile ? 10 : 18} className={cn(parseInt(result.departure_distance_m) / 1000 > 10 ? 'text-accent dark:text-primary' : 'text-gray-300 dark:text-gray-700')} />
+                    <Car size={isMobile ? 10 : 18} className={cn(result.departurePoint.distanceM / 1000 > 5 ? 'text-accent dark:text-primary' : 'text-gray-300 dark:text-gray-700')} />
+                    <Car size={isMobile ? 10 : 18} className={cn(result.departurePoint.distanceM / 1000 > 10 ? 'text-accent dark:text-primary' : 'text-gray-300 dark:text-gray-700')} />
                   </div>
                   <div>
-                    Approx. <span className='text-accent dark:text-primary'>{Math.floor(parseInt(result.departure_distance_m) / 1000)} km</span> from departure
+                    Approx. <span className='text-accent dark:text-primary'>{Math.floor(result.departurePoint.distanceM / 1000)} km</span> from departure
                   </div>
                 </div>
               </div>
               <div className='flex flex-col'>
                 <span className="font-bold text-xs md:text-lg">
-                  {result.destination_city}
+                  {result.destinationPoint.city}
                 </span>
                 <div className='flex flex-col md:flex-row gap-x-2 items-start md:items-center text-[8px] text-muted-foreground'>
                   <div className='flex gap-x-2 items-center'>
                     <Car size={isMobile ? 10 : 18} className={cn('text-accent dark:text-primary')} />
-                    <Car size={isMobile ? 10 : 18} className={cn(parseInt(result.destination_distance_m) / 1000 > 5 ? 'text-accent dark:text-primary' : 'text-gray-300 dark:text-gray-700')} />
-                    <Car size={isMobile ? 10 : 18} className={cn(parseInt(result.destination_distance_m) / 1000 > 10 ? 'text-accent dark:text-primary' : 'text-gray-300 dark:text-gray-700')} />
+                    <Car size={isMobile ? 10 : 18} className={cn(result.destinationPoint.distanceM / 1000 > 5 ? 'text-accent dark:text-primary' : 'text-gray-300 dark:text-gray-700')} />
+                    <Car size={isMobile ? 10 : 18} className={cn(result.destinationPoint.distanceM / 1000 > 10 ? 'text-accent dark:text-primary' : 'text-gray-300 dark:text-gray-700')} />
                   </div>
                   <div>
-                    Approx. <span className='text-accent dark:text-primary'>{Math.floor(parseInt(result.destination_distance_m) / 1000)} km</span> from destination
+                    Approx. <span className='text-accent dark:text-primary'>{Math.floor(result.destinationPoint.distanceM / 1000)} km</span> from destination
                   </div>
                 </div>
               </div>
@@ -77,18 +77,18 @@ const SingleSearch = ({ result }: { result: RideSearch }) => {
           <div className='flex flex-col md:hidden gap-y-2 items-center justify-center px-4'>
             <div>
               <Avatar className='w-16 h-16'>
-                <AvatarImage src={result.creator_photo ? result.creator_photo : ''} />
+                <AvatarImage src={result.creator.photo ? result.creator.photo : ''} />
                 <AvatarFallback className='bg-red-400 text-sm'>
-                  {result.creator_name.split(' ').map(word => word.charAt(0)).join('').substring(0, 2).toUpperCase()}
+                  {result.creator.name.split(' ').map(word => word.charAt(0)).join('').substring(0, 2).toUpperCase()}
                 </AvatarFallback>
               </Avatar>
             </div>
             <div className='flex flex-col items-center justify-center font-bold gap-x-2 text-sm w-full'>
               <div className='flex text-[8px] items-center'>
-                <StarIcon className='w-2 h-2 text-[#EFBF04] fill-current' /> {result.creator_avg_rating}
+                <StarIcon className='w-2 h-2 text-[#EFBF04] fill-current' /> {result.creator.avgRating}
               </div>
               <span className='text-[8px] text-muted-foreground'>
-                {`(${result.creator_total_reviews} Reviews)`}
+                {`(${result.creator.totalReviews} Reviews)`}
               </span>
             </div>
           </div>
@@ -96,16 +96,16 @@ const SingleSearch = ({ result }: { result: RideSearch }) => {
         <Separator className='w-full' />
         <div className='flex gap-x-8 font-bold items-center text-xs md:text-xl px-4 py-4'>
           <div className=''>
-            {new Date(result.departure_time).toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric' })}
+            {new Date(result.ride.departureTime).toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric' })}
           </div>
           <div className='flex items-center'>
-            <IndianRupee size={isMobile ? 10 : 18} className='font-bold' /> {Math.floor(result.price as unknown as number)}
+            <IndianRupee size={isMobile ? 10 : 18} className='font-bold' /> {Math.floor(result.ride.price as unknown as number)}
           </div>
           <div className='flex items-center gap-x-2 text-muted-foreground text-xs md:text-lg'>
-            {result?.vehicle_brand && result?.vehicle_name && result?.vehicle_color
+            {result?.creator.vehicle?.brand && result?.creator.vehicle?.name && result?.creator.vehicle?.color
               ? (
                 <>
-                  <CarFrontIcon size={isMobile ? 15 : 20} /> {(result.vehicle_brand)?.toUpperCase() + ' ' + result.vehicle_name + ' (' + result.vehicle_color + ')'}
+                  <CarFrontIcon size={isMobile ? 15 : 20} /> {(result?.creator.vehicle?.brand)?.toUpperCase() + ' ' + result?.creator.vehicle?.name + ' (' + result?.creator.vehicle?.color + ')'}
                 </>) : ""}
           </div>
         </div>
@@ -114,18 +114,18 @@ const SingleSearch = ({ result }: { result: RideSearch }) => {
       <div className='md:flex hidden flex-col items-center justify-center gap-y-4 px-10'>
         <div>
           <Avatar className='md:w-30 md:h-30'>
-            <AvatarImage src={result.creator_photo ? result.creator_photo : ''} />
+            <AvatarImage src={result.creator.photo ? result.creator.photo : ''} />
             <AvatarFallback className='bg-red-400 text-sm'>
-              {result.creator_name.split(' ').map(word => word.charAt(0)).join('').substring(0, 2).toUpperCase()}
+              {result.creator.name.split(' ').map(word => word.charAt(0)).join('').substring(0, 2).toUpperCase()}
             </AvatarFallback>
           </Avatar>
         </div>
         <div className='flex flex-col items-center justify-center font-bold gap-x-2 text-sm w-full'>
           <div className='flex text-[8px] items-center'>
-            <StarIcon className='w-2 h-2 md:w-4 md:h-4 text-[#EFBF04] fill-current' /> {result.creator_avg_rating}
+            <StarIcon className='w-2 h-2 md:w-4 md:h-4 text-[#EFBF04] fill-current' /> {result.creator.avgRating}
           </div>
           <span className='text-[8px] md:text-xs text-muted-foreground'>
-            {`(${result.creator_total_reviews} Reviews)`}
+            {`(${result.creator.totalReviews} Reviews)`}
           </span>
         </div>
       </div>

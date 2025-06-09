@@ -1,8 +1,9 @@
 'use client'
 import React from 'react'
-import SingleSearch from './SingleSearch'
 import { RideSearch } from '@ridex/common'
 import { Skeleton } from '@ridex/ui/components/skeleton';
+import { RideSearchCard } from './SegmentRideCard';
+import { ScrollArea } from '@ridex/ui/components/scroll-area';
 
 const NoResultsComponent = () => (
   <div className="text-center py-12">
@@ -36,13 +37,13 @@ const SearchResults = ({ data, isLoading, isError }: { data?: RideSearch[], isLo
   }
 
   return (
-    <div>
+    <ScrollArea className='w-full h-full'>
       {data.map((result) => {
         return (
-          <SingleSearch key={result.id} result={result} />
+          <RideSearchCard key={result.ride.id} result={result} />
         )
       })}
-    </div>
+    </ScrollArea>
   )
 }
 

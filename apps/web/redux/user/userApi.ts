@@ -1,5 +1,5 @@
 import { baseApi } from "../store/baseApi";
-import { User, GetUserResponse, Vehicle, UploadUrlType, UpdateUserPreference, AddVehicle } from '@ridex/common'
+import { User, GetUserResponse, Vehicle, UploadUrlType, UpdateUserPreference, AddVehicle, RemoveVehiclePhoto } from '@ridex/common'
 
 const userApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
@@ -39,7 +39,7 @@ const userApi = baseApi.injectEndpoints({
     updateProfilePhoto: builder.mutation<Omit<User, 'password'>, { url: string }>({
       query: (body) => ({
         url: "/user/update-profile-photo",
-        method: "PATCH",
+        method: "POST",
         body
       }),
       extraOptions: {
@@ -119,7 +119,7 @@ const userApi = baseApi.injectEndpoints({
     updateUserPreference: builder.mutation<Omit<User, 'password' | 'refresh_token'>, Partial<UpdateUserPreference>>({
       query: (body) => ({
         url: `/user/update-preference`,
-        method: 'PATCH',
+        method: 'POST',
         body
       }),
       invalidatesTags: ["User"],
@@ -139,6 +139,17 @@ const userApi = baseApi.injectEndpoints({
           patchResult.undo();
         }
       }
+    }),
+    removeVehiclePhoto: builder.mutation<void, RemoveVehiclePhoto>({
+      query: (body) => ({
+        url: `/user/remove-vehicle-photo`,
+        method: 'POST',
+        body
+      }),
+      invalidatesTags: ["User"],
+      extraOptions: {
+        withAuth: true
+      }
     })
   })
 })
@@ -154,5 +165,6 @@ export const {
   useGetUploadUrlQuery,
   useGetViewUrlQuery,
   useGetUserByIdQuery,
-  useUpdateUserPreferenceMutation
+  useUpdateUserPreferenceMutation,
+  useRemoveVehiclePhotoMutation
 } = userApi

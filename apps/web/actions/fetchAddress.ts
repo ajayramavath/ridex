@@ -1,5 +1,6 @@
 'use server'
 import { PlaceDetails } from "./getPlaceDetails";
+import redis from "@/lib/redis";
 
 export interface AddressComponent {
   long_name: string;
@@ -53,8 +54,16 @@ interface GoogleGeocodeResponse {
 }
 
 export async function reverseGeocode(latitude: number, longitude: number) {
-
+  const cacheExpiry = 15552000; // 6 months
   const API_KEY = process.env.GOOGLE_PLACES_API_KEY;
+
+  const cacheKey = `reverseGeocode-${latitude}-${longitude}`;
+  const cached = await redis.get(cacheKey);
+  if (cached) {
+    console.log("Found cached result for", latitude, longitude);
+    return JSON.parse(cached);
+  }
+  console.log("Searching from Google API", latitude, longitude);
 
   const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${API_KEY}`;
 
@@ -67,6 +76,9 @@ export async function reverseGeocode(latitude: number, longitude: number) {
     }
 
     const placeDetails: PlaceDetails = extractPlaceDetailsWithFallbacks(data) as PlaceDetails;
+
+    await redis.set(cacheKey, JSON.stringify(placeDetails), "EX", cacheExpiry);
+
     return placeDetails
 
   } catch (error) {

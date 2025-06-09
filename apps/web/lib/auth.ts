@@ -14,13 +14,6 @@ interface CustomUser extends User {
   }
 }
 
-interface CustomSession extends Session {
-  accessToken: {
-    token: string
-    expiresIn: number
-  }
-}
-
 const apiUrl = process.env.NODE_ENV === 'development' ? 'http://localhost:8080' : process.env.INTERNAL_API_URL
 
 export const authOptions: NextAuthOptions = {

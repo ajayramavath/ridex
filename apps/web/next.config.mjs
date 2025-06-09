@@ -8,6 +8,16 @@ const nextConfig = {
       immutablePaths: []
     }
     return config
+  },
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "ridex-s3-bucket.s3.amazonaws.com",
+        port: "",
+        pathname: "/**"
+      }
+    ]
   }
 }
 

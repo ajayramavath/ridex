@@ -1,6 +1,6 @@
 import { client, GetRideResult, PrismaClientType, PrismaPromise } from "@ridex/db";
 import { createRide, searchRides, createPoint } from '@prisma/client/sql'
-import type { RideSearch, RideWhereInput, User } from '@ridex/common'
+import type { RideByIdResult, RideSearch, RideWhereInput, User } from '@ridex/common'
 import { CreateRideInput, Point, Ride, RideSearchResult, SearchPayload, RideWithPoints, RideResult } from "@ridex/common"
 import Container, { Inject, Service } from "typedi";
 import { ApiError } from "../error/ApiError";
@@ -67,8 +67,7 @@ export class RideService {
     };
   }
 
-  public async createRide({ rideData, createdBy_id }: { rideData: CreateRideInput, createdBy_id: string }):
-    Promise<PrismaPromise<createRide.Result[]>> {
+  public async createRide({ rideData, createdBy_id }: { rideData: CreateRideInput, createdBy_id: string }): Promise<PrismaPromise<createRide.Result[]>> {
     const user = await this.client.user.findUnique({ where: { id: createdBy_id }, select: { vehicleId: true } })
     if (!user) throw new Error("User not found")
     if (!user.vehicleId) throw new Error("User doesn't have a vehicle")
@@ -139,7 +138,9 @@ export class RideService {
           duration_s: Number(ride.segment_duration_s),
           price: Number(ride.segment_price),
           pickup: { lat: Number(ride.pickup_lat), lng: Number(ride.pickup_lng) },
-          dropoff: { lat: Number(ride.dropoff_lat), lng: Number(ride.dropoff_lng) }
+          dropoff: { lat: Number(ride.dropoff_lat), lng: Number(ride.dropoff_lng) },
+          estimated_pickup_time: ride.estimated_pickup_time ? new Date(ride.estimated_pickup_time) : null,
+          estimated_dropoff_time: ride.estimated_dropoff_time ? new Date(ride.estimated_dropoff_time) : null
         },
         departurePoint: {
           id: ride.departure_point_id,
@@ -181,7 +182,7 @@ export class RideService {
   }
 
 
-  public async getRideById(rideId: string): Promise<GetRideResult> {
+  public async getRideById(rideId: string): Promise<RideByIdResult> {
     const findRide = await this.client.ride.findUnique({
       where: { id: rideId },
       include: {
@@ -192,7 +193,6 @@ export class RideService {
             name: true,
             profile_photo: true,
             id: true,
-            ratingsGot: true,
             vehicle: true,
           }
         },
@@ -209,8 +209,25 @@ export class RideService {
         }
       }
     });
-    if (!findRide) throw new ApiError(409, `Ride with id ${rideId} doesn't exist`);
-    return findRide;
+
+    if (!findRide) throw new ApiError(409, `Ride with id ${rideId} doesn't exist`)
+    const ratingStats = await this.client.rating.aggregate({
+      where: { recipientId: findRide.createdBy_id },
+      _avg: {
+        score: true
+      }
+    })
+    const reviewStats = await this.client.review.aggregate({
+      where: { recipientId: findRide.createdBy_id },
+      _count: {
+        _all: true
+      }
+    })
+
+    const avgRating = ratingStats?._avg?.score || 0;
+    const totalReviews = reviewStats?._count?._all;
+
+    return { ...findRide, avgRating, totalReviews };
   }
 
   public async getRidesByUserId(userId: string): Promise<Ride[]> {

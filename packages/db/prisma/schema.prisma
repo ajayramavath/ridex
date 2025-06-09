@@ -28,10 +28,11 @@ model User {
   posted_rides  Ride[]      @relation("PostedRides")
   joined_rides  Passenger[]
 
-  chatPreference    PreferenceOption? @default(NEUTRAL)
-  musicPreference   PreferenceOption? @default(NEUTRAL)
-  smokingPreference PreferenceOption? @default(AGAINST)
-  petPreference     PreferenceOption? @default(NEUTRAL)
+  chatPreference      PreferenceOption? @default(NEUTRAL)
+  musicPreference     PreferenceOption? @default(NEUTRAL)
+  smokingPreference   PreferenceOption? @default(AGAINST)
+  petPreference       PreferenceOption? @default(NEUTRAL)
+  bootSpacePreference PreferenceOption? @default(NEUTRAL)
 
   messages     Message[]
   vehicleId    String?   @unique

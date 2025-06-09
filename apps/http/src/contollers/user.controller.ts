@@ -1,8 +1,9 @@
-import { AddVehicle, UpdateUserPreference, UploadUrlType, User, Vehicle } from '@ridex/common';
+import { AddVehicle, RemoveVehiclePhoto, UpdateUserPreference, UploadUrlType, User, Vehicle } from '@ridex/common';
 import Container from "typedi";
 import { UserService } from "../services/user.service";
 import { NextFunction, Request, Response } from "express";
 import { ApiError } from "../error/ApiError";
+import { logger } from '../utils/logger';
 
 export class UserController {
   public user = Container.get(UserService);
@@ -114,10 +115,23 @@ export class UserController {
   public updateUserPreference = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       if (!req.user) throw new ApiError(401, 'Unauthorized');
+      logger.info(req.body)
       const id: string = req.user.id;
       const data = req.body as Partial<UpdateUserPreference>;
+      logger.info(data)
       const updatedUser = await this.user.updateUserPreference(data, id);
       res.status(200).json({ message: 'User preference updated successfully', data: updatedUser });
+    } catch (error) {
+      next(error)
+    }
+  }
+
+  public removeVehiclePhoto = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      if (!req.user) throw new ApiError(401, 'Unauthorized');
+      const payload: RemoveVehiclePhoto = req.body;
+      await this.user.removeVehiclePhoto(payload);
+      res.status(200).json({ message: 'Vehicle photo removed successfully', data: null });
     } catch (error) {
       next(error)
     }

@@ -13,7 +13,12 @@ export type {
 } from '@ridex/db';
 import { z } from 'zod'
 import { Router } from "express";
-import { Rating, Review, Ride, RideWithPoints, User, Vehicle, ReviewWithAuthor, PassengerWithRide } from '@ridex/db'
+import { Rating, Review, Ride, RideWithPoints, User, Vehicle, ReviewWithAuthor, PassengerWithRide, GetRideResult } from '@ridex/db'
+
+export type RideByIdResult = GetRideResult & {
+  avgRating: number;
+  totalReviews: number;
+}
 
 export interface RideResult extends RideWithPoints {
   origin_distance: number;
@@ -128,6 +133,8 @@ export interface RideSearch {
     price: number;
     pickup: { lat: number; lng: number };
     dropoff: { lat: number; lng: number };
+    estimated_pickup_time: Date | null;
+    estimated_dropoff_time: Date | null;
   };
   departurePoint: {
     id: string;
@@ -174,6 +181,7 @@ export const UpdateUserPreferenceSchema = z.object({
   musicPreference: z.enum(["GOOD", "NEUTRAL", "AGAINST"]),
   smokingPreference: z.enum(["GOOD", "NEUTRAL", "AGAINST"]),
   petPreference: z.enum(["GOOD", "NEUTRAL", "AGAINST"]),
+  bootSpacePreference: z.enum(["GOOD", "NEUTRAL", "AGAINST"]),
 })
 export type UpdateUserPreference = z.infer<typeof UpdateUserPreferenceSchema>
 
@@ -230,6 +238,13 @@ export type GetUserResponse = Partial<User> & {
   reviewsGiven: Review[],
   reviewsGot: ReviewWithAuthor[],
 }
+
+export const removeVehiclePhotoSchema = z.object({
+  id: z.string(),
+  index: z.union([z.literal(0), z.literal(1)])
+})
+
+export type RemoveVehiclePhoto = z.infer<typeof removeVehiclePhotoSchema>
 
 export const GetUserSchema = z.object({
   id: z.string()

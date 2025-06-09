@@ -9,15 +9,12 @@ import Container from 'typedi';
 const getAuthorization = (req: Request) => {
   const header = req.header('Authorization');
   if (header) return header.split('Bearer ')[1];
-
   return null;
 }
 
 export const AuthMiddleware = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const Authorization = getAuthorization(req);
-    logger.info(`Authorization: ${Authorization}`);
-
     if (Authorization) {
       const { id } = verify(Authorization, JWT_SECRET) as JwtPayload;
       logger.info(`Authorization: ${Authorization} \n id: ${id}`);

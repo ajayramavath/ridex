@@ -95,7 +95,6 @@ export type GetRideResult = Prisma.RideGetPayload<{
         name: true;
         profile_photo: true;
         id: true;
-        ratingsGot: true;
         vehicle: true;
       }
     };

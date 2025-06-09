@@ -46,9 +46,7 @@ export class App {
   private async initializeDatabase() {
     logger.info('Initializing database connection...');
     try {
-      const client = new PrismaClient({
-        log: ['query', 'info', 'warn', 'error'],
-      });
+      const client = new PrismaClient();
       await client.$connect().then(() => {
         logger.info('✅ Database connected successfully');
         Container.set('client', client);

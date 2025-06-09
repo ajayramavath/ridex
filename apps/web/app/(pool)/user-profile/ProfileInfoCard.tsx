@@ -67,8 +67,8 @@ const ProfileInfoCard = () => {
     }
   }
   return (
-    <Card className='grow w-full md:w-[60%] shadow-none bg-card border-none'>
-      <CardHeader className='font-medium flex items-center justify-between text-accent dark:text-primary'>
+    <Card className='grow w-full md:w-[60%] pt-2 pb-4 border bg-background dark:bg-card gap-0'>
+      <CardHeader className='font-medium mb-2 text-sm flex items-center justify-between'>
         Profile Information
         <Button
           variant="link"

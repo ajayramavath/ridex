@@ -77,6 +77,13 @@ SELECT
   loci.distance_m,
   loci.duration_s,
 
+  (loci.departure_time
+   + (loci.duration_s * loci.start_frac) * INTERVAL '1 second'
+  ) AS estimated_pickup_time,
+  (loci.departure_time
+   + (loci.duration_s * loci.end_frac) * INTERVAL '1 second'
+  ) AS estimated_dropoff_time,
+
   ST_X(loci.departure_location::geometry) AS departure_lng,
   ST_Y(loci.departure_location::geometry) AS departure_lat,
   ST_X(loci.destination_location::geometry) AS destination_lng,

@@ -4,7 +4,7 @@ import { PrismaClientType } from "@ridex/db";
 import Container, { Service } from "typedi";
 import { ApiError } from "../error/ApiError";
 import s3Client from "../utils/s3Client";
-import { UploadUrlType, User, Vehicle, UpdateUserPreference, AddVehicle } from '@ridex/common'
+import { UploadUrlType, User, Vehicle, UpdateUserPreference, AddVehicle, RemoveVehiclePhoto } from '@ridex/common'
 import { logger } from "../utils/logger";
 
 @Service()
@@ -86,8 +86,10 @@ export class UserService {
     const key = this.getFileKey({ type }, userId);
     logger.info(key, fileType, process.env.AWS_S3_BUCKET_NAME)
 
+    logger.info(process.env.S3_BUCKET_NAME)
+
     const command = new PutObjectCommand({
-      Bucket: process.env.AWS_S3_BUCKET_NAME,
+      Bucket: process.env.S3_BUCKET_NAME,
       Key: key,
       ContentType: fileType,
       Metadata: { uploadedBy: userId }
@@ -182,6 +184,7 @@ export class UserService {
   }
 
   public async updateUserPreference(data: Partial<UpdateUserPreference>, userId: string): Promise<Omit<User, 'password' | 'refresh_token'>> {
+    logger.info(data)
     const user = await this.client.user.update({
       where: { id: userId },
       data: {
@@ -189,8 +192,24 @@ export class UserService {
         musicPreference: data.musicPreference,
         smokingPreference: data.smokingPreference,
         petPreference: data.petPreference,
+        bootSpacePreference: data.bootSpacePreference,
       }
     })
     return user
+  }
+
+  public async removeVehiclePhoto({ id, index }: RemoveVehiclePhoto): Promise<void> {
+    if (index === 0) {
+      await this.client.vehicle.update({
+        where: { id },
+        data: { photo1: null }
+      })
+    } else {
+      await this.client.vehicle.update({
+        where: { id },
+        data: { photo2: null }
+      })
+    }
+    return
   }
 }

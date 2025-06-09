@@ -37,7 +37,7 @@ const SearchPage = () => {
       <div className='w-full md:hidden'>
         <MobileSearch />
       </div>
-      <div className='w-full'>
+      <div className='w-full h-full'>
         <SearchResults data={searchResults?.data} isLoading={isLoading} isError={isError} />
       </div>
     </div>

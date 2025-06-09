@@ -33,6 +33,11 @@ const preferenceOptions = {
     { value: "GOOD", label: "Paw-sitive", emoji: "🐾" },
     { value: "NEUTRAL", label: "Furry-neutral", emoji: "🐶" },
     { value: "AGAINST", label: "Allergies", emoji: "🤧" }
+  ],
+  bootSpace: [
+    { value: "GOOD", label: "Pack it all", emoji: "🧳" },
+    { value: "NEUTRAL", label: "Standard space", emoji: "🎒" },
+    { value: "AGAINST", label: "Light traveler", emoji: "👜" }
   ]
 }
 
@@ -44,6 +49,7 @@ const PreferenceCard = () => {
     { id: "music", name: "Music", value: null },
     { id: "smoking", name: "Smoking", value: null },
     { id: "pets", name: "Pets", value: null },
+    { id: "bootSpace", name: "Boot Space", value: null },
   ])
   const [preferenceChanged, setPreferenceChanged] = useState<Boolean>(false)
 
@@ -55,6 +61,7 @@ const PreferenceCard = () => {
           if (pref.id === 'music') pref.value = user.musicPreference || null;
           if (pref.id === 'smoking') pref.value = user.smokingPreference || null;
           if (pref.id === 'pets') pref.value = user.petPreference || null;
+          if (pref.id === 'bootSpace') pref.value = user.bootSpacePreference || null;
           return pref;
         })
       )
@@ -68,7 +75,8 @@ const PreferenceCard = () => {
         user.chatPreference !== preferences.find(pref => pref.id === 'chattiness')?.value ||
         user.musicPreference !== preferences.find(pref => pref.id === 'music')?.value ||
         user.smokingPreference !== preferences.find(pref => pref.id === 'smoking')?.value ||
-        user.petPreference !== preferences.find(pref => pref.id === 'pets')?.value
+        user.petPreference !== preferences.find(pref => pref.id === 'pets')?.value ||
+        user.bootSpacePreference !== preferences.find(pref => pref.id === 'bootSpace')?.value
       ) {
         setPreferenceChanged(true)
       } else {
@@ -95,6 +103,7 @@ const PreferenceCard = () => {
       musicPreference: preferences.find(pref => pref.id === 'music')?.value || undefined,
       smokingPreference: preferences.find(pref => pref.id === 'smoking')?.value || undefined,
       petPreference: preferences.find(pref => pref.id === 'pets')?.value || undefined,
+      bootSpacePreference: preferences.find(pref => pref.id === 'bootSpace')?.value || undefined,
     }
     try {
       await updateUserPreference(preferanceData).unwrap()
@@ -105,8 +114,8 @@ const PreferenceCard = () => {
 
 
   return (
-    <Card className='my-4 border-none'>
-      <CardHeader className='font-medium flex items-center justify-between text-accent dark:text-primary'>
+    <Card className='my-4 py-2 w-full border bg-background dark:bg-card gap-0 self-stretch'>
+      <CardHeader className='font-medium text-sm flex items-center justify-between'>
         Travel Preferences
         <Button
           variant="link"

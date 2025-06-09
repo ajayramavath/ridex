@@ -22,46 +22,39 @@ const ProfilePage = () => {
   const { isMobile } = useMediaQuery()
 
   useEffect(() => {
-    if (user)
+    if (user) {
+      console.log(user.profile_photo)
       setProfile(user.profile_photo)
+    }
   }, [user])
 
   const handleProfilePictureChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
-    if (file) {
-      try {
-        // const { url, key } = await getUploadUrl({
-        //   type: 'profile-photo',
-        //   fileType: file.type
-        // }).unwrap()
+    if (!file) return
+    const uploadPromise = async () => {
+      const { url, key } = await getUploadUrl({
+        type: 'profile-photo',
+        fileType: file.type
+      }).unwrap()
 
-        // const s3response = await fetch(url, {
-        //   method: 'PUT',
-        //   body: file,
-        //   headers: {
-        //     'Content-Type': file.type
-        //   }
-        // })
-
-        // if (s3response.ok) {
-        //   const url = `https://ridex-s3-bucket.s3.amazonaws.com/${key}`;
-        //   await updateProfile({
-        //     url
-        //   })
-        // } else {
-        //   toast.error('Failed to upload image')
-        // }
-
-        const reader = new FileReader()
-        reader.onload = (event) => {
-          setProfile(prev => (event.target?.result as string))
+      const s3response = await fetch(url, {
+        method: 'PUT',
+        body: file,
+        headers: {
+          'Content-Type': file.type
         }
-        reader.readAsDataURL(file)
+      })
 
-      } catch (error) {
-        toast.error('Failed to upload image')
+      if (!s3response.ok) {
+        throw new Error('Failed to upload to S3')
       }
+      await updateProfile({ url: `https://ridex-s3-bucket.s3.amazonaws.com/${key}` })
     }
+    toast.promise(uploadPromise(), {
+      loading: 'Uploading...',
+      success: 'Uploaded successfully',
+      error: 'Failed to upload image'
+    })
   }
 
   const handleDeleteProfilePicture = async () => {
@@ -74,7 +67,7 @@ const ProfilePage = () => {
 
   if (isLoading) {
     return (
-      <div className="h-full space-y-6 pb-10">
+      <div className="h-full space-y-6">
         <div className="flex gap-6">
           {/* Avatar Section - Left 40% */}
           <div className="w-[40%] flex items-center gap-x-2 justify-center space-y-4 ">
@@ -102,7 +95,7 @@ const ProfilePage = () => {
   if (!user) return <div>User not found</div>
 
   return (
-    <ScrollArea className='h-full flex flex-col md:gap-y-10 pb-18 md:pb-10'>
+    <>
       <div className='flex flex-col items-center w-full md:flex-row md:items-start'>
         <div className='flex flex-col gap-y-4 w-full justify-center pt-2 md:pt-8 items-center md:w-[40%]'>
           <Avatar className="h-32 w-32">
@@ -150,12 +143,12 @@ const ProfilePage = () => {
         <ProfileInfoCard />
       </div>
       <div className='w-full flex flex-col md:flex-row'>
-        <div className='md:w-[40%] md:pr-4'>
+        <div className='md:w-[40%] flex md:pr-4'>
           <PreferenceCard />
         </div>
         <VehicleCard />
       </div>
-    </ScrollArea>
+    </>
   )
 }
 
