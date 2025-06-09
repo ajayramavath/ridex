@@ -13,16 +13,8 @@ export default function CreateRide() {
 
   const didRedirect = useRef(false)
 
-  if (isLoading || isFetching) {
-    return (
-      <div className='flex items-center justify-center h-full'>
-        <LoaderIcon className='animate-spin' />
-      </div>
-    )
-  }
-
   useEffect(() => {
-    if (didRedirect.current) return
+    if (didRedirect.current || isLoading || isFetching) return
 
     if (!user || !user.vehicle) {
       toast.error('Please add your vehicle to create a ride!')
@@ -42,6 +34,14 @@ export default function CreateRide() {
     isLoading,
     isFetching
   ])
+
+  if (isLoading || isFetching) {
+    return (
+      <div className='flex items-center justify-center h-full'>
+        <LoaderIcon className='animate-spin' />
+      </div>
+    )
+  }
 
   return null
 }
