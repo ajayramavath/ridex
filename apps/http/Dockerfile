@@ -1,40 +1,52 @@
+# ----------------------
+# BASE IMAGE
+# ----------------------
 FROM node:22-alpine AS base
+
+# system deps
+RUN apk update && apk add --no-cache libc6-compat
+
+# enable pnpm & turbo globally
+WORKDIR /app
+RUN corepack enable && corepack prepare pnpm@latest --activate
+RUN npm add -g turbo
 
 # ----------------------
 # BUILDER IMAGE
 # ----------------------
+# just copy your source here
 FROM base AS builder
-RUN apk update && apk add --no-cache libc6-compat
-WORKDIR /app
-RUN corepack enable && corepack prepare pnpm@latest --activate
-RUN npm add -g turbo
 COPY . .
-RUN turbo prune @ridex/http --docker
 
 # ----------------------
 # INSTALLER IMAGE
 # ----------------------
 FROM base AS installer
-RUN apk update && apk add --no-cache libc6-compat
 WORKDIR /app
-RUN corepack enable && corepack prepare pnpm@latest --activate
-COPY --from=builder /app/out/json ./
+
+# get everything from builder
+COPY --from=builder /app ./
+
+# install deps
 RUN pnpm install
 
-COPY --from=builder /app/out/full/. .
-RUN cd ./packages/db && pnpm exec prisma generate --sql
+# generate Prisma client (point at your schema)
+RUN pnpm exec prisma generate \
+  --schema=./packages/db/prisma/schema.prisma \
+  --sql
 
+# build only your HTTP app
 RUN pnpm turbo build --filter=@ridex/http...
 
 # ----------------------
 # RUNTIME IMAGE
 # ----------------------
-FROM base AS runner
+FROM node:22-alpine AS runner
+
+# system deps (if you need any at runtime)
+RUN apk update && apk add --no-cache libc6-compat
+
 WORKDIR /app
-
-# RUN addgroup --system --gid 1001 expressjs && adduser --system --uid 1001 expressjs
-# USER expressjs
-
 COPY --from=installer /app ./
 
-CMD ["node" , "apps/http/dist/index.js"]
+CMD ["node", "apps/http/dist/index.js"]
