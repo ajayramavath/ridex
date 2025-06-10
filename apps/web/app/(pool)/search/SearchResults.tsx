@@ -3,7 +3,6 @@ import React from 'react'
 import { RideSearch } from '@ridex/common'
 import { Skeleton } from '@ridex/ui/components/skeleton';
 import { RideSearchCard } from './SegmentRideCard';
-import { ScrollArea } from '@ridex/ui/components/scroll-area';
 
 const NoResultsComponent = () => (
   <div className="text-center py-12">
@@ -37,13 +36,15 @@ const SearchResults = ({ data, isLoading, isError }: { data?: RideSearch[], isLo
   }
 
   return (
-    <ScrollArea className='w-full h-full'>
-      {data.map((result) => {
-        return (
-          <RideSearchCard key={result.ride.id} result={result} />
-        )
-      })}
-    </ScrollArea>
+    <div className='w-full h-full flex flex-col gap-y-2 md:gap-y-4'>
+      {
+        data.map((result) => {
+          return (
+            <RideSearchCard key={result.ride.id} result={result} />
+          )
+        })
+      }
+    </div>
   )
 }
 

@@ -13,7 +13,7 @@ const ConfirmRide = () => {
   const { departure, destination, departureTime, availableSeats, price } = useAppSelector(state => state.createRide)
 
   return (
-    <div className={cn('flex h-full items-center py-10 px-4 flex-col gap-y-10')}>
+    <div className={cn('flex h-full items-center md:py-10 pt-2 px-4 flex-col gap-y-10')}>
       <h1 className='text-xl md:text-3xl font-bold relative w-full flex justify-center'>
         Confirm your ride
         <div className='absolute left-0 top-0'>

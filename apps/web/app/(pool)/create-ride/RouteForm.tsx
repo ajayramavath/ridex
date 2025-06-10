@@ -6,7 +6,6 @@ import RouteMap from './RouteMap'
 import { useRouteMap } from '@/hooks/useRouteMap'
 import { RadioGroup, RadioGroupItem } from '@ridex/ui/components/radio-group'
 import { Label } from '@ridex/ui/components/label'
-import { ScrollArea } from '@ridex/ui/components/scroll-area'
 
 const RouteForm = () => {
 
@@ -22,14 +21,14 @@ const RouteForm = () => {
   }
 
   return (
-    <div className={cn('flex md:flex-row flex-col h-full w-full justify-between items-center md:gap-y-10')}>
+    <div className={cn('flex md:flex-row flex-col h-full w-full justify-between items-center md:gap-y-10 pt-2')}>
       <div className='flex w-full md:w-1/3 flex-col md:h-full justify-between items-center gap-y-4 md:gap-y-10 px-2 pb-4 md:py-10'>
-        <h1 className='text relative text-lg md:text-2xl font-bold w-full flex justify-center'>
+        <div className='text relative text-lg md:text-2xl font-bold w-full flex justify-center'>
           Select a Route
           <div className='absolute left-0 top-0'>
             <BackButton />
           </div>
-        </h1>
+        </div>
         <RadioGroup
           value={`${selectedRouteIndex}`}
           onValueChange={(value) => {
@@ -54,16 +53,13 @@ const RouteForm = () => {
             </div>
           ))}
         </RadioGroup>
-        <div className='md:block hidden'>
+        <div className='md:block'>
           <CreateButton />
         </div>
       </div>
       <div
         className={cn('h-full grow bg-black w-full md:w-2/3',)}>
         <RouteMap mapRef={mapRef} />
-      </div>
-      <div className='md:hidden my-2'>
-        <CreateButton />
       </div>
     </div>
   )

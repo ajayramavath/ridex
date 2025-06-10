@@ -20,21 +20,21 @@ const AddressForm = ({ type, buttonHref }: { type: "departure" | "destination", 
   const currentType = type.includes('departure') ? 'departure' : 'destination'
 
   return (
-    <div className={cn('flex md:flex-row flex-col w-full h-full justify-center')}>
+    <div className={cn('flex md:flex-row flex-col w-full h-full justify-center gap-y-4 pt-2')}>
       <div className={cn(
-        'flex flex-col gap-y-2 md:gap-y-4 transition-all duration-500 md:h-full items-center py-10 px-4 w-full',
+        'flex flex-col md:gap-y-4 transition-all duration-500 md:h-full items-center md:py-10 px-4 w-full',
         location?.latitude ? 'md:w-1/3' : 'md:w-full',
       )}>
-        <h1 className='md:text-3xl text-lg font-bold relative w-full flex justify-center'>
+        <div className='md:text-3xl text-lg font-bold relative w-full flex justify-center'>
           {type === 'departure' ? 'Pick Up' : 'Drop Off'}
           <div className='absolute left-0 top-0'>
             <BackButton />
           </div>
-        </h1>
+        </div>
         {location?.latitude ?
           <div className='md:text-xl'>Pin your exact address on the map</div> :
           <div>{`Enter full address of the ${currentType === 'departure' ? 'pick up' : 'drop off'} location`}</div>}
-        <div className={cn(location?.latitude ? 'w-full' : 'w-1/2')}>
+        <div className={cn('my-4', location?.latitude || isMobile ? 'w-full' : 'w-1/2')}>
           <AutoCompleteInput
             type={type === 'departure' ? "createDeparture" : "createDestination"}
             placeholder={currentType === 'departure' ? 'Leaving from' : 'Going to'} />

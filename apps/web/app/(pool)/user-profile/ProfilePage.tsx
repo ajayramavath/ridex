@@ -4,7 +4,6 @@ import { Avatar, AvatarFallback, AvatarImage } from '@ridex/ui/components/avatar
 import { Button } from '@ridex/ui/components/button'
 import { Input } from '@ridex/ui/components/input'
 import { Label } from '@ridex/ui/components/label'
-import { ScrollArea } from '@ridex/ui/components/scroll-area'
 import { Skeleton } from '@ridex/ui/components/skeleton'
 import { PlusCircleIcon, Trash, User2Icon } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
@@ -96,7 +95,7 @@ const ProfilePage = () => {
 
   return (
     <>
-      <div className='flex flex-col items-center w-full md:flex-row md:items-start'>
+      <div className='flex flex-col items-center w-full h-full md:flex-row md:items-start'>
         <div className='flex flex-col gap-y-4 w-full justify-center pt-2 md:pt-8 items-center md:w-[40%]'>
           <Avatar className="h-32 w-32">
             <AvatarImage

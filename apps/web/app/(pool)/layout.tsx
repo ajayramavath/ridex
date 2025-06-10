@@ -2,7 +2,6 @@ import React from 'react'
 import Sidebar from '@/components/Sidebar'
 import MobileNav from '@/components/MobileNav';
 import Logo from '@/components/Logo';
-import { ScrollArea } from '@ridex/ui/components/scroll-area';
 import Theme from '@/components/Header/components/Theme';
 
 const layout = async ({ children }: Readonly<{ children: React.ReactNode }>) => {
@@ -14,14 +13,14 @@ const layout = async ({ children }: Readonly<{ children: React.ReactNode }>) => 
         <Theme />
       </div>
 
-      <div className='flex items-start bg-sidebar md:pt-2 h-screen'>
+      <div className='flex items-start bg-sidebar md:pt-2 h-screen overflow-hidden'>
         <aside className='hidden md:flex'><Sidebar /></aside>
-        <main className='flex-1 bg-background min-w-0 md:max-w-7xl h-full md:rounded-tl-2xl'>
-          <ScrollArea className='w-full h-full [&>[data-radix-scroll-area-viewport]]:h-[calc(100vh)]'>
-            <div className='w-full h-full mx-auto pt-14 pb-16 md:py-0 flex flex-col'>
+        <main className='flex-1 bg-background min-w-0 md:max-w-7xl h-full md:rounded-tl-2xl overflow-y-auto'>
+          <div className='w-full mx-auto pt-14 pb-16 md:py-0 relative h-full'>
+            <div className='absolute overflow-y-auto overflow-x-hidden top-[45px] bottom-16 left-0 right-0 md:static md:top-0 md:bottom-0'>
               {children}
             </div>
-          </ScrollArea>
+          </div>
         </main>
       </div>
 

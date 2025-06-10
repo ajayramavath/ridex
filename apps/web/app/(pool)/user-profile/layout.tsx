@@ -1,7 +1,6 @@
 import React from 'react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@ridex/ui/components/tabs'
 import { Laptop2, UserPen } from 'lucide-react'
-import { ScrollArea } from '@ridex/ui/components/scroll-area'
 
 const layout = ({
   appearance,
@@ -12,7 +11,7 @@ const layout = ({
   profile: React.ReactNode
 }) => {
   return (
-    <Tabs defaultValue="profile" className="w-full h-full pb-4 px-4 md:px-8 md:py-4">
+    <Tabs defaultValue="profile" className="w-full md:h-full py-2 px-4 md:px-8 md:py-4">
       <TabsList className='bg-card px-2 py-6'>
         <TabsTrigger
           className='text-xs md:text-sm px-4 py-4 data-[state=active]:!text-accent dark:data-[state=active]:!text-primary cursor-pointer'

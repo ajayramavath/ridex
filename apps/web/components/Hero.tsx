@@ -21,7 +21,7 @@ const Hero = () => {
           <div className="pointer-events-none -z-10 absolute inset-0 flex items-center justify-center bg-background [mask-image:radial-gradient(ellipse_at_center,transparent_20%,black)] dark:bg-background"></div>
         </>
       )}
-      <div className="flex flex-col items-center justify-center md:pt-20 gap-y-4 text-center max-w-7xl">
+      <div className="flex flex-col items-center py-2 justify-center md:pt-20 gap-y-4 text-center max-w-7xl">
         <span className="text-5xl md:text-7xl font-bold text-accent/70 dark:text-primary">Share Rides, Save More</span>
         <span className="text-xl md:text-2xl">The Smarter Way to Commute!</span>
         <p className="text-muted-foreground text-md md:text-lg">

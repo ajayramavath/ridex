@@ -23,7 +23,7 @@ const SearchPage = () => {
   }
 
   return (
-    <div className={cn('w-full h-full flex flex-col items-start gap-y-4 overflow-hidden')}>
+    <div className={cn('w-full h-full flex flex-col items-start gap-y-4 py-2')}>
       <div className='w-full hidden md:flex gap-x-2 items-center justify-center'>
         <Search />
         <Button

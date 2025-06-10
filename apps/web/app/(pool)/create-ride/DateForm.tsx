@@ -91,7 +91,7 @@ const DateForm = () => {
   const currentTimeString = `${currentDisplayHours}:${currentMinutes.toString().padStart(2, '0')} ${currentPeriod}`;
 
   return (
-    <div className={cn('flex h-full items-center py-10 px-4 flex-col gap-y-4 md:gap-y-10')}>
+    <div className={cn('flex h-full items-center md:py-10 pt-2 px-4 flex-col gap-y-4 md:gap-y-10')}>
       <h1 className='text-lg md:text-3xl font-bold relative w-full flex justify-center'>
         When would you like to pick up?
         <div className='absolute left-0 top-0'>

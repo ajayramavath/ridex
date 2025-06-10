@@ -16,7 +16,7 @@ const PassengerForm = () => {
 
 
   return (
-    <div className={cn('flex h-full items-center py-10 px-4 flex-col gap-y-10')}>
+    <div className={cn('flex h-full items-center md:py-10 pt-2 px-4 flex-col gap-y-10')}>
       <div className='md:text-3xl font-bold relative w-full flex justify-center'>
         <span className='w-3/4 md:w-full text-center'>How many passengers will be travelling?</span>
         <div className='absolute left-0 top-0'>

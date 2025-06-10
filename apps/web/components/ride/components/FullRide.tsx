@@ -41,7 +41,7 @@ const FullRide = ({ id }: { id: string }) => {
   }
 
   return (
-    <div className='flex flex-col md:p-4 px-4'>
+    <div className='flex flex-col md:p-4 px-4 py-2'>
       <div className='p-2 md:py-4 md:px-2 w-full flex items-center justify-between'>
         <h2 className='text-md md:text-xl flex md:flex-row flex-col font-semibold'>
           {new Date(ride.departure_time).toDateString()}

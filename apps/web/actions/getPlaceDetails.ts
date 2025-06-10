@@ -35,9 +35,6 @@ export interface PlaceDetails {
 }
 
 export const fetchPlaceDetails = async (placeId: string) => {
-  const session = await getAuthSession()
-  if (!session || !session.user || !session.user.name) throw new Error('Unauthorized');
-
   const cacheKey = `place:${placeId}`;
   const cacheExpiry = 15552000; // 6 months
 

@@ -2,7 +2,6 @@
 import { useGetUserQuery } from '@/redux/user/userApi'
 import { GetUserResponse, RideWithPoints } from '@ridex/common'
 import { Avatar, AvatarFallback, AvatarImage } from '@ridex/ui/components/avatar'
-import { ScrollArea } from '@ridex/ui/components/scroll-area'
 import { Separator } from '@ridex/ui/components/separator'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@ridex/ui/components/tabs'
 import { Car, ListCheck, Loader2Icon, Settings, ThumbsUp, User2Icon, Users } from 'lucide-react'
@@ -72,62 +71,60 @@ const Appearance = () => {
         </div>
       </div >
       <div>
-        <ScrollArea className='w-full h-full'>
-          <Tabs defaultValue="ridesPosted" className="w-full md:px-8 md:py-4">
-            <TabsList className='bg-background md:px-2'>
-              <TabsTrigger
-                value="ridesPosted"
-                className={cn(TabsTriggerClassName)}
-              >
-                <ListCheck className='w-5 h-5' />
-                <span className='hidden md:block'>Rides Posted</span>
-              </TabsTrigger>
-              <TabsTrigger
-                value="ridesJoined"
-                className={cn(TabsTriggerClassName)}
-              >
-                <Users className='w-5 h-5' />
-                <span className='hidden md:block'>Rides Joined</span>
-              </TabsTrigger>
-              <TabsTrigger value="preferences" className={cn(TabsTriggerClassName)}>
-                <Settings className='w-5 h-5' />
-                <span className='hidden md:block'>Preferences</span>
-              </TabsTrigger>
-              <TabsTrigger value="reviews" className={cn(TabsTriggerClassName)}>
-                <ThumbsUp className='w-5 h-5' />
-                <span className='hidden md:block'>Reviews</span>
-              </TabsTrigger>
-              <TabsTrigger value="vehicles" className={cn(TabsTriggerClassName)}>
-                <Car className='w-5 h-5' />
-                <span className='hidden md:block'>Vehicles</span>
-              </TabsTrigger>
-            </TabsList>
-            <Separator className='bg-muted-foreground' />
-            <TabsContent value="ridesPosted" className='h-full'>
-              <h1 className='text-sm font-bold'>Rides Posted</h1>
-              {user.posted_rides.length === 0 && <div className='text-muted-foreground'>No rides yet</div>}
-              {user.posted_rides.map(ride => {
-                return <Ride key={ride.id} ride={ride} />
-              })}
-            </TabsContent>
-            <TabsContent value="ridesJoined" className='h-full'>
-              <h1 className='text-sm font-bold mb-4'>Rides Joined</h1>
-              {user.joined_rides.length === 0 && <div className='text-muted-foreground'>No rides yet</div>}
-              {user.joined_rides.map(joined => {
-                return <JoinedRides key={joined.id} passenger={joined} />
-              })}
-            </TabsContent>
-            <TabsContent value="reviews" className='h-full'>
-              <ReviewSection user={user} />
-            </TabsContent>
-            <TabsContent value="preferences">
-              <PreferanceSection user={user} />
-            </TabsContent>
-            <TabsContent value="vehicles">
-              <VehiclesSection user={user} />
-            </TabsContent>
-          </Tabs>
-        </ScrollArea>
+        <Tabs defaultValue="ridesPosted" className="w-full md:px-8 md:py-4">
+          <TabsList className='bg-background md:px-2'>
+            <TabsTrigger
+              value="ridesPosted"
+              className={cn(TabsTriggerClassName)}
+            >
+              <ListCheck className='w-5 h-5' />
+              <span className='hidden md:block'>Rides Posted</span>
+            </TabsTrigger>
+            <TabsTrigger
+              value="ridesJoined"
+              className={cn(TabsTriggerClassName)}
+            >
+              <Users className='w-5 h-5' />
+              <span className='hidden md:block'>Rides Joined</span>
+            </TabsTrigger>
+            <TabsTrigger value="preferences" className={cn(TabsTriggerClassName)}>
+              <Settings className='w-5 h-5' />
+              <span className='hidden md:block'>Preferences</span>
+            </TabsTrigger>
+            <TabsTrigger value="reviews" className={cn(TabsTriggerClassName)}>
+              <ThumbsUp className='w-5 h-5' />
+              <span className='hidden md:block'>Reviews</span>
+            </TabsTrigger>
+            <TabsTrigger value="vehicles" className={cn(TabsTriggerClassName)}>
+              <Car className='w-5 h-5' />
+              <span className='hidden md:block'>Vehicles</span>
+            </TabsTrigger>
+          </TabsList>
+          <Separator className='bg-muted-foreground' />
+          <TabsContent value="ridesPosted" className='h-full'>
+            <h1 className='text-sm font-bold'>Rides Posted</h1>
+            {user.posted_rides.length === 0 && <div className='text-muted-foreground'>No rides yet</div>}
+            {user.posted_rides.map(ride => {
+              return <Ride key={ride.id} ride={ride} />
+            })}
+          </TabsContent>
+          <TabsContent value="ridesJoined" className='h-full'>
+            <h1 className='text-sm font-bold mb-4'>Rides Joined</h1>
+            {user.joined_rides.length === 0 && <div className='text-muted-foreground'>No rides yet</div>}
+            {user.joined_rides.map(joined => {
+              return <JoinedRides key={joined.id} passenger={joined} />
+            })}
+          </TabsContent>
+          <TabsContent value="reviews" className='h-full'>
+            <ReviewSection user={user} />
+          </TabsContent>
+          <TabsContent value="preferences">
+            <PreferanceSection user={user} />
+          </TabsContent>
+          <TabsContent value="vehicles">
+            <VehiclesSection user={user} />
+          </TabsContent>
+        </Tabs>
       </div>
     </div >
   )

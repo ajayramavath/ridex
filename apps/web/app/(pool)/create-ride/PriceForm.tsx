@@ -69,7 +69,7 @@ const PriceForm = () => {
   }
 
   return (
-    <div className={cn('flex h-full items-center py-10 px-4 flex-col gap-y-10')}>
+    <div className={cn('flex h-full items-center md:py-10 px-4 pt-2 flex-col gap-y-10')}>
       <h1 className='text-lg md:text-3xl font-bold relative w-full flex justify-center'>
         How much is the trip?
         <div className='absolute left-0 top-0'>

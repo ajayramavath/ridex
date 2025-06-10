@@ -45,7 +45,7 @@ const RidePage = ({ id }: { id: string }) => {
   const { vehicle } = creator
 
   return (
-    <div className='flex flex-col md:p-4 px-4'>
+    <div className='flex flex-col md:p-4 px-4 py-2'>
       <RideBar ride={searchResultForThisRide} />
       <div className='my-2 md:my-4 w-full flex md:flex-row flex-col gap-y-2 md:gap-x-4'>
         <div className='w-full md:w-3/4 flex'>
