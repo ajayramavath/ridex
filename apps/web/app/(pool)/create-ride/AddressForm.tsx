@@ -33,9 +33,11 @@ const AddressForm = ({ type, buttonHref }: { type: "departure" | "destination", 
         </h1>
         {location?.latitude ?
           <div className='md:text-xl'>Pin your exact address on the map</div> :
-          <div>Enter full address of the pick up location</div>}
+          <div>{`Enter full address of the ${currentType === 'departure' ? 'pick up' : 'drop off'} location`}</div>}
         <div className={cn(location?.latitude ? 'w-full' : 'w-1/2')}>
-          <AutoCompleteInput type={type === 'departure' ? "createDeparture" : "createDestination"} placeholder='Leaving from' />
+          <AutoCompleteInput
+            type={type === 'departure' ? "createDeparture" : "createDestination"}
+            placeholder={currentType === 'departure' ? 'Leaving from' : 'Going to'} />
         </div>
         {location && location.latitude && (
           <CreateButton />
@@ -43,7 +45,7 @@ const AddressForm = ({ type, buttonHref }: { type: "departure" | "destination", 
       </div>
       <div
         className={cn(
-          'h-full bg-black transition-all duration-500',
+          'bg-black transition-all duration-500 h-full',
           location?.latitude ? 'md:w-2/3 opacity-100 w-full' : 'w-0 opacity-0'
         )}>
         <Map type={currentType} />

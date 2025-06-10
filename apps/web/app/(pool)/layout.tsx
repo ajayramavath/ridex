@@ -14,11 +14,11 @@ const layout = async ({ children }: Readonly<{ children: React.ReactNode }>) => 
         <Theme />
       </div>
 
-      <div className='flex items-start bg-sidebar md:pt-2'>
+      <div className='flex items-start bg-sidebar md:pt-2 h-screen'>
         <aside className='hidden md:flex'><Sidebar /></aside>
-        <main className='flex-1 bg-background min-w-0 md:max-w-7xl h-screen md:rounded-tl-2xl'>
-          <ScrollArea className='w-full h-full'>
-            <div className='w-full h-full mx-auto pt-14 pb-16 md:py-0'>
+        <main className='flex-1 bg-background min-w-0 md:max-w-7xl h-full md:rounded-tl-2xl'>
+          <ScrollArea className='w-full h-full [&>[data-radix-scroll-area-viewport]]:h-[calc(100vh)]'>
+            <div className='w-full h-full mx-auto pt-14 pb-16 md:py-0 flex flex-col'>
               {children}
             </div>
           </ScrollArea>
